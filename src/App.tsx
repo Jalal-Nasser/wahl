@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import Layout from '@/components/Layout'
@@ -17,6 +17,7 @@ import Clients from '@/pages/Clients'
 import Contact from '@/pages/Contact'
 import Blog from '@/pages/Blog'
 import AdminContent from '@/pages/AdminContent'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 function App() {
   const { user, checkAuth } = useAuthStore()
@@ -49,8 +50,26 @@ function App() {
           <Route path="admin/content" element={<AdminContent />} />
         </Route>
       </Routes>
+      <PublicAnalytics />
     </Router>
   )
+}
+
+function PublicAnalytics() {
+  const location = useLocation()
+  const path = location.pathname
+  const publicPaths = new Set([
+    '/',
+    '/about',
+    '/services',
+    '/clients',
+    '/contact',
+    '/blog',
+    '/login',
+    '/register',
+  ])
+  const isPublic = publicPaths.has(path) || path.startsWith('/blog/')
+  return isPublic ? <VercelAnalytics /> : null
 }
 
 export default App
