@@ -1,7 +1,12 @@
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { SiteSettings } from '@/types/database';
+import { getSiteSettings } from '@/lib/contentProvider';
 
 export default function Footer() {
+  const [settings, setSettings] = useState<SiteSettings | null>(null)
+  useEffect(() => { (async () => { const s = await getSiteSettings(); setSettings(s) })() }, [])
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-16">
@@ -10,23 +15,23 @@ export default function Footer() {
           <div>
             <div className="mb-6 flex flex-col items-center">
               <div className="relative mb-2">
-                <img src="/logo.png" alt="WAHL" className="h-12 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
+                <img src={(settings?.logo_url || '/logo.png')} alt="WAHL" className="h-12 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#111827' }}></div>
                   <span className="absolute text-white font-extrabold text-base">W</span>
                 </div>
               </div>
-              <div className="text-sm font-bold text-white text-center">WAHL Logistics وهل اللوجيستية</div>
+              <div className="text-sm font-bold text-white text-center">{settings?.footer_brand_text || 'WAHL Logistics وهل اللوجيستية'}</div>
             </div>
             <p className="text-gray-300 mb-6">
               Your trusted partner for comprehensive logistics solutions. 
               We deliver excellence with every shipment, ensuring your cargo reaches its destination safely and on time.
             </p>
             <div className="flex space-x-4">
-              <Facebook className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" />
-              <Twitter className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" />
-              <Linkedin className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" />
-              <Instagram className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" />
+              {settings?.social_facebook && (<a href={settings.social_facebook} target="_blank" rel="noreferrer"><Facebook className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" /></a>)}
+              {settings?.social_twitter && (<a href={settings.social_twitter} target="_blank" rel="noreferrer"><Twitter className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" /></a>)}
+              {settings?.social_linkedin && (<a href={settings.social_linkedin} target="_blank" rel="noreferrer"><Linkedin className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" /></a>)}
+              {settings?.social_instagram && (<a href={settings.social_instagram} target="_blank" rel="noreferrer"><Instagram className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" /></a>)}
             </div>
           </div>
 
