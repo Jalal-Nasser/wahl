@@ -58,7 +58,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true })
     try {
       const me = await api.auth.me()
-      set({ user: me || null, isLoading: false })
+      const isValid = typeof me === 'object' && me !== null && 'id' in (me as Record<string, unknown>) && 'email' in (me as Record<string, unknown>)
+      set({ user: isValid ? (me as User) : null, isLoading: false })
     } catch {
       set({ user: null, isLoading: false })
     }
