@@ -14,6 +14,13 @@ export default function AdminContent() {
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [location, setLocation] = useState('')
+  const [logoUrl, setLogoUrl] = useState('')
+  const [headerBrand, setHeaderBrand] = useState('')
+  const [footerBrand, setFooterBrand] = useState('')
+  const [facebook, setFacebook] = useState('')
+  const [twitter, setTwitter] = useState('')
+  const [linkedin, setLinkedin] = useState('')
+  const [instagram, setInstagram] = useState('')
   const [slides, setSlides] = useState<HeroSlide[]>([])
   const [clients, setClients] = useState<ClientLogo[]>([])
   const [newSlide, setNewSlide] = useState({ image_url: '', title: '', subtitle: '', sort_order: 0 })
@@ -31,6 +38,13 @@ export default function AdminContent() {
       setPhone(current?.phone || '')
       setEmail(current?.email || '')
       setLocation(current?.location || '')
+      setLogoUrl(current?.logo_url || '')
+      setHeaderBrand(current?.header_brand_text || '')
+      setFooterBrand(current?.footer_brand_text || '')
+      setFacebook(current?.social_facebook || '')
+      setTwitter(current?.social_twitter || '')
+      setLinkedin(current?.social_linkedin || '')
+      setInstagram(current?.social_instagram || '')
 
       const hs = await getHeroSlides()
       setSlides((hs as HeroSlide[] | null) || [])
@@ -48,6 +62,13 @@ export default function AdminContent() {
       phone,
       email,
       location,
+      logo_url: logoUrl,
+      header_brand_text: headerBrand,
+      footer_brand_text: footerBrand,
+      social_facebook: facebook,
+      social_twitter: twitter,
+      social_linkedin: linkedin,
+      social_instagram: instagram,
       updated_at: new Date().toISOString()
     }
     const updated = await upsertSiteSettings(payload)
@@ -105,6 +126,36 @@ export default function AdminContent() {
                   <label className="block text-sm font-medium text-gray-700">Location</label>
                   <input value={location} onChange={(e) => setLocation(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Logo URL</label>
+                  <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" placeholder="https://.../logo.png" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Header Brand Text</label>
+                  <input value={headerBrand} onChange={(e) => setHeaderBrand(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" placeholder="WAHL Logistics وهل اللوجيستية" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Footer Brand Text</label>
+                  <input value={footerBrand} onChange={(e) => setFooterBrand(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" placeholder="WAHL Logistics وهل اللوجيستية" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Facebook URL</label>
+                    <input value={facebook} onChange={(e) => setFacebook(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Twitter URL</label>
+                    <input value={twitter} onChange={(e) => setTwitter(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                    <input value={linkedin} onChange={(e) => setLinkedin(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Instagram URL</label>
+                    <input value={instagram} onChange={(e) => setInstagram(e.target.value)} className="mt-1 w-full border rounded-md px-3 py-2" />
+                  </div>
+                </div>
                 <button onClick={saveSettings} className="bg-blue-600 text-white px-4 py-2 rounded-md">Save Settings</button>
               </div>
             </div>
@@ -127,6 +178,19 @@ export default function AdminContent() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <input placeholder="Image URL" value={newSlide.image_url} onChange={(e) => setNewSlide({ ...newSlide, image_url: e.target.value })} className="border rounded-md px-3 py-2" />
+                  <input type="file" accept="image/*" onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const ab = await file.arrayBuffer()
+                    const base64 = btoa(String.fromCharCode(...new Uint8Array(ab)))
+                    const resp = await fetch('/api/upload', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ filename: file.name, contentType: file.type, dataBase64: base64 })
+                    })
+                    const data = await resp.json()
+                    if (data?.url) setNewSlide({ ...newSlide, image_url: data.url })
+                  }} className="border rounded-md px-3 py-2" />
                   <input placeholder="Title" value={newSlide.title} onChange={(e) => setNewSlide({ ...newSlide, title: e.target.value })} className="border rounded-md px-3 py-2" />
                   <input placeholder="Subtitle" value={newSlide.subtitle} onChange={(e) => setNewSlide({ ...newSlide, subtitle: e.target.value })} className="border rounded-md px-3 py-2" />
                   <input type="number" placeholder="Order" value={newSlide.sort_order} onChange={(e) => setNewSlide({ ...newSlide, sort_order: parseInt(e.target.value || '0') })} className="border rounded-md px-3 py-2" />
@@ -154,9 +218,22 @@ export default function AdminContent() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <input placeholder="Client Name" value={newClient.name} onChange={(e) => setNewClient({ ...newClient, name: e.target.value })} className="border rounded-md px-3 py-2" />
               <input placeholder="Logo URL" value={newClient.logo_url} onChange={(e) => setNewClient({ ...newClient, logo_url: e.target.value })} className="border rounded-md px-3 py-2" />
+              <input type="file" accept="image/*" onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                const ab = await file.arrayBuffer()
+                const base64 = btoa(String.fromCharCode(...new Uint8Array(ab)))
+                const resp = await fetch('/api/upload', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ filename: file.name, contentType: file.type, dataBase64: base64 })
+                })
+                const data = await resp.json()
+                if (data?.url) setNewClient({ ...newClient, logo_url: data.url })
+              }} className="border rounded-md px-3 py-2" />
               <input type="number" placeholder="Order" value={newClient.sort_order} onChange={(e) => setNewClient({ ...newClient, sort_order: parseInt(e.target.value || '0') })} className="border rounded-md px-3 py-2" />
             </div>
             <button onClick={addClient} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center gap-2">
@@ -170,3 +247,20 @@ export default function AdminContent() {
     </div>
   )
 }
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Upload Logo</label>
+                  <input type="file" accept="image/*" onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    const ab = await file.arrayBuffer()
+                    const base64 = btoa(String.fromCharCode(...new Uint8Array(ab)))
+                    const resp = await fetch('/api/upload', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ filename: file.name, contentType: file.type, dataBase64: base64 })
+                    })
+                    const data = await resp.json()
+                    if (data?.url) setLogoUrl(data.url)
+                  }} />
+                  {logoUrl && (<div className="mt-2 text-xs text-gray-600">Current: {logoUrl}</div>)}
+                </div>
