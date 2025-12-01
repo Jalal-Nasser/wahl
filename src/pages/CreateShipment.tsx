@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, MapPin, Truck, DollarSign, Plus, Trash2, User, Phone, Mail, Building } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Truck, DollarSign, User } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Carrier, Address } from '../types/database';
@@ -648,7 +648,7 @@ const CreateShipment: React.FC = () => {
           </div>
         );
 
-      case 5:
+      case 5: {
         const selectedCarrier = carriers.find(c => c.id === formData.carrier_id);
         const baseRate = parseFloat(selectedCarrier?.base_rate || '0');
         const insuranceFee = formData.insurance ? 5 : 0;
@@ -724,6 +724,7 @@ const CreateShipment: React.FC = () => {
             </div>
           </div>
         );
+      }
 
       default:
         return null;

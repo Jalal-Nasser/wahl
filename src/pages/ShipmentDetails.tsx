@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Package, Truck, Clock, CheckCircle, XCircle, MapPin, Calendar, DollarSign, User, Mail, Phone, Building, Eye, Download } from 'lucide-react';
+import { ArrowLeft, Package, Truck, Clock, CheckCircle, XCircle, MapPin, User, Eye, Download } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Shipment, TrackingEvent } from '../types/database';
@@ -97,16 +97,6 @@ const ShipmentDetails: React.FC = () => {
   const exportLabel = () => {
     if (!shipment) return;
     
-    const labelData = {
-      trackingNumber: shipment.tracking_number,
-      sender: shipment.sender_address,
-      recipient: shipment.recipient_address,
-      carrier: shipment.carrier,
-      weight: shipment.weight,
-      serviceType: shipment.service_type,
-      cost: calculateCost()
-    };
-
     const printWindow = window.open('', '_blank');
     printWindow?.document.write(`
       <!DOCTYPE html>

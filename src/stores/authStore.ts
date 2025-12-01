@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const me = await api.auth.me()
       set({ user: me || null, isLoading: false })
-    } catch (error) {
+    } catch {
       set({ user: null, isLoading: false })
     }
   },

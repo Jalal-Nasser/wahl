@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
-import { TrendingUp, Package, Truck, Clock, DollarSign, Users, Calendar, Download, Filter } from 'lucide-react';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler, TooltipItem } from 'chart.js';
+import { TrendingUp, Package, Clock, DollarSign, Download } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Shipment } from '../types/database';
@@ -187,7 +187,7 @@ const Analytics: React.FC = () => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
+          label: (context: TooltipItem<'bar' | 'line'>) => {
             return `${context.dataset.label}: ${context.parsed.y || context.parsed}`;
           }
         }

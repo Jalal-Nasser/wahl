@@ -27,8 +27,13 @@ export default function AdminContent() {
   const [newClient, setNewClient] = useState({ name: '', logo_url: '', sort_order: 0 })
 
   useEffect(() => {
-    if (!user) return navigate('/login')
-    if (user.role !== 'admin') return navigate('/dashboard')
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    if (user.role !== 'admin') {
+      navigate('/dashboard')
+    }
   }, [user])
 
   useEffect(() => {
@@ -89,7 +94,7 @@ export default function AdminContent() {
     setSlides((data as HeroSlide[] | null) || [])
   }
 
-  const addClient = async () => {
+  const addClientItem = async () => {
     if (!newClient.name || !newClient.logo_url) return
     await addClient({ ...newClient, active: true })
     setNewClient({ name: '', logo_url: '', sort_order: 0 })
@@ -236,7 +241,7 @@ export default function AdminContent() {
               }} className="border rounded-md px-3 py-2" />
               <input type="number" placeholder="Order" value={newClient.sort_order} onChange={(e) => setNewClient({ ...newClient, sort_order: parseInt(e.target.value || '0') })} className="border rounded-md px-3 py-2" />
             </div>
-            <button onClick={addClient} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center gap-2">
+            <button onClick={addClientItem} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Add Client
             </button>
@@ -247,20 +252,3 @@ export default function AdminContent() {
     </div>
   )
 }
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Upload Logo</label>
-                  <input type="file" accept="image/*" onChange={async (e) => {
-                    const file = e.target.files?.[0]
-                    if (!file) return
-                    const ab = await file.arrayBuffer()
-                    const base64 = btoa(String.fromCharCode(...new Uint8Array(ab)))
-                    const resp = await fetch('/api/upload', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ filename: file.name, contentType: file.type, dataBase64: base64 })
-                    })
-                    const data = await resp.json()
-                    if (data?.url) setLogoUrl(data.url)
-                  }} />
-                  {logoUrl && (<div className="mt-2 text-xs text-gray-600">Current: {logoUrl}</div>)}
-                </div>

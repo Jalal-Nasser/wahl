@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Package, Truck, Clock, CheckCircle, MapPin, Calendar, Navigation } from 'lucide-react';
+import { Search, Package, Truck, Clock, CheckCircle, MapPin, Navigation } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Shipment, TrackingEvent } from '../types/database';
 

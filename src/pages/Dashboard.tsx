@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { Shipment, AnalyticsData } from '@/types/database'
-import { Package, Truck, Clock, DollarSign, TrendingUp, Users, Plus, Eye } from 'lucide-react'
+import { Package, Truck, Clock, DollarSign, TrendingUp, Plus, Eye, LucideIcon } from 'lucide-react'
 
 export default function Dashboard() {
   const { user } = useAuthStore()
@@ -80,7 +80,7 @@ export default function Dashboard() {
     return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800'
   }
 
-  const StatCard = ({ title, value, icon: Icon, trend }: { title: string; value: string | number; icon: any; trend?: number }) => (
+  const StatCard = ({ title, value, icon: Icon, trend }: { title: string; value: string | number; icon: LucideIcon; trend?: number }) => (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="flex items-center justify-between">
         <div>

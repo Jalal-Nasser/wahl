@@ -43,11 +43,11 @@ export const api = {
   },
   addresses: {
     list() { return request('/addresses', {}, true) },
-    add(payload: any) { return request('/addresses', { method: 'POST', body: JSON.stringify(payload) }, true) },
+    add(payload: Record<string, unknown>) { return request('/addresses', { method: 'POST', body: JSON.stringify(payload) }, true) },
   },
   shipments: {
     list() { return request('/shipments', {}, true) },
-    create(payload: any) { return request('/shipments', { method: 'POST', body: JSON.stringify(payload) }, true) },
+    create(payload: Record<string, unknown>) { return request('/shipments', { method: 'POST', body: JSON.stringify(payload) }, true) },
     get(id: string) { return request(`/shipments/${id}`, {}, true) },
     track(number: string) { return request(`/tracking?number=${encodeURIComponent(number)}`) },
   },

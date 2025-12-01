@@ -15,6 +15,8 @@ export interface Carrier {
   service_types: string[];
   is_active: boolean;
   created_at: string;
+  description?: string;
+  base_rate?: string;
 }
 
 export interface Address {
@@ -28,6 +30,10 @@ export interface Address {
   country: string;
   is_default: boolean;
   created_at: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  company?: string;
 }
 
 export interface Shipment {
@@ -39,8 +45,16 @@ export interface Shipment {
   recipient_address: AddressData;
   weight: number;
   dimensions?: string;
+  length?: number;
+  width?: number;
+  height?: number;
+  value?: number;
+  description?: string;
+  estimated_delivery?: string;
+  insurance?: boolean;
+  signature_required?: boolean;
   service_type: string;
-  status: 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'failed' | 'returned';
+  status: 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'failed' | 'returned' | 'cancelled';
   cost?: number;
   created_at: string;
   updated_at: string;
@@ -48,6 +62,7 @@ export interface Shipment {
 }
 
 export interface AddressData {
+  name?: string;
   street: string;
   city: string;
   state?: string;
@@ -55,6 +70,8 @@ export interface AddressData {
   country: string;
   full_name?: string;
   phone?: string;
+  email?: string;
+  company?: string;
 }
 
 export interface TrackingEvent {
@@ -108,6 +125,13 @@ export interface SiteSettings {
   email: string;
   location: string;
   updated_at: string;
+  logo_url?: string;
+  header_brand_text?: string;
+  footer_brand_text?: string;
+  social_facebook?: string;
+  social_twitter?: string;
+  social_linkedin?: string;
+  social_instagram?: string;
 }
 
 export interface HeroSlide {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { Package, BarChart3, Truck, Search, User, LogOut, Menu, X, Plus, Home } from 'lucide-react'
+import { Package, BarChart3, Truck, Search, User, LogOut, Menu, X, Plus } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Layout() {

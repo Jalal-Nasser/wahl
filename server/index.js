@@ -61,15 +61,40 @@ app.put('/api/site-settings', async (req, res) => {
     // upsert single row
     const rows = await query('SELECT id FROM wahl_site_settings ORDER BY updated_at DESC LIMIT 1')
     if (rows.length) {
-      await query('UPDATE wahl_site_settings SET site_name=?, phone=?, email=?, location=?, updated_at=NOW() WHERE id=?', [site_name, phone, email, location, rows[0].id])
+      await query('UPDATE wahl_site_settings SET site_name=?, phone=?, email=?, location=?, logo_url=COALESCE(?, logo_url), header_brand_text=COALESCE(?, header_brand_text), footer_brand_text=COALESCE(?, footer_brand_text), social_facebook=COALESCE(?, social_facebook), social_twitter=COALESCE(?, social_twitter), social_linkedin=COALESCE(?, social_linkedin), social_instagram=COALESCE(?, social_instagram), updated_at=NOW() WHERE id=?', [site_name, phone, email, location, req.body.logo_url || null, req.body.header_brand_text || null, req.body.footer_brand_text || null, req.body.social_facebook || null, req.body.social_twitter || null, req.body.social_linkedin || null, req.body.social_instagram || null, rows[0].id])
       const updated = await query('SELECT * FROM wahl_site_settings WHERE id=?', [rows[0].id])
       res.json(updated[0])
     } else {
       const id = crypto.randomUUID().replace(/-/g, '')
-      await query('INSERT INTO wahl_site_settings (id, site_name, phone, email, location) VALUES (?,?,?,?,?)', [id, site_name, phone, email, location])
+      await query('INSERT INTO wahl_site_settings (id, site_name, phone, email, location, logo_url, header_brand_text, footer_brand_text, social_facebook, social_twitter, social_linkedin, social_instagram) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [id, site_name, phone, email, location, req.body.logo_url || null, req.body.header_brand_text || null, req.body.footer_brand_text || null, req.body.social_facebook || null, req.body.social_twitter || null, req.body.social_linkedin || null, req.body.social_instagram || null])
       const latest = await query('SELECT * FROM wahl_site_settings ORDER BY updated_at DESC LIMIT 1')
       res.json(latest[0])
     }
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/admin/migrate-site-settings', async (req, res) => {
+  try {
+    const token = req.headers['x-install-token']
+    if (!process.env.INSTALL_TOKEN || token !== process.env.INSTALL_TOKEN) return res.status(401).json({ error: 'Unauthorized' })
+    const columns = [
+      ['logo_url', 'TEXT'],
+      ['header_brand_text', 'TEXT'],
+      ['footer_brand_text', 'TEXT'],
+      ['social_facebook', 'TEXT'],
+      ['social_twitter', 'TEXT'],
+      ['social_linkedin', 'TEXT'],
+      ['social_instagram', 'TEXT'],
+    ]
+    for (const [name, type] of columns) {
+      const exists = await query('SELECT 1 FROM information_schema.columns WHERE table_schema=? AND table_name=? AND column_name=?', [process.env.MYSQL_DATABASE, 'wahl_site_settings', name])
+      if (!exists.length) {
+        await query(`ALTER TABLE wahl_site_settings ADD COLUMN ${name} ${type}`)
+      }
+    }
+    res.json({ ok: true })
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
@@ -154,6 +179,8 @@ const port = process.env.PORT || 3001
 // Serve SPA static assets from dist
 const distPath = path.join(process.cwd(), 'dist')
 app.use(express.static(distPath))
+// Serve uploaded assets
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')))
 
 // SPA fallback (keep API routes working)
 app.get('*', (req, res, next) => {
@@ -163,6 +190,22 @@ app.get('*', (req, res, next) => {
 
 app.listen(port, () => {
   console.log(`API server listening on http://localhost:${port}`)
+})
+// File upload (base64)
+app.post('/api/upload', async (req, res) => {
+  try {
+    const { filename = 'file', contentType = 'application/octet-stream', dataBase64 } = req.body
+    if (!dataBase64) return res.status(400).json({ error: 'Missing data' })
+    const buf = Buffer.from(dataBase64, 'base64')
+    const dir = path.join(process.cwd(), 'uploads')
+    await fs.promises.mkdir(dir, { recursive: true })
+    const safe = `${Date.now()}-${(filename || 'file').replace(/[^a-zA-Z0-9._-]/g, '')}`
+    const full = path.join(dir, safe)
+    await fs.promises.writeFile(full, buf)
+    res.json({ url: `/uploads/${safe}`, contentType })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
 })
 // Auth
 app.post('/api/auth/register', async (req, res) => {
@@ -241,7 +284,15 @@ app.post('/api/addresses', authMiddleware, async (req, res) => {
 app.get('/api/shipments', authMiddleware, async (req, res) => {
   try {
     const rows = await query('SELECT * FROM wahl_shipments WHERE user_id=? ORDER BY created_at DESC', [req.user.id])
-    res.json(rows)
+    const carriers = await query('SELECT id, name FROM wahl_carriers')
+    const carrierMap = Object.fromEntries(carriers.map(c => [c.id, c]))
+    const parsed = rows.map(r => ({
+      ...r,
+      sender_address: typeof r.sender_address === 'string' ? JSON.parse(r.sender_address) : r.sender_address,
+      recipient_address: typeof r.recipient_address === 'string' ? JSON.parse(r.recipient_address) : r.recipient_address,
+      carrier: r.carrier_id ? carrierMap[r.carrier_id] || null : null,
+    }))
+    res.json(parsed)
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
@@ -265,7 +316,14 @@ app.get('/api/shipments/:id', authMiddleware, async (req, res) => {
   try {
     const rows = await query('SELECT * FROM wahl_shipments WHERE id=? AND user_id=?', [req.params.id, req.user.id])
     if (!rows.length) return res.status(404).json({ error: 'Not found' })
-    const shipment = rows[0]
+    const shipmentRaw = rows[0]
+    const carrier = shipmentRaw.carrier_id ? (await query('SELECT id, name FROM wahl_carriers WHERE id=?', [shipmentRaw.carrier_id]))[0] || null : null
+    const shipment = {
+      ...shipmentRaw,
+      sender_address: typeof shipmentRaw.sender_address === 'string' ? JSON.parse(shipmentRaw.sender_address) : shipmentRaw.sender_address,
+      recipient_address: typeof shipmentRaw.recipient_address === 'string' ? JSON.parse(shipmentRaw.recipient_address) : shipmentRaw.recipient_address,
+      carrier,
+    }
     const events = await query('SELECT * FROM wahl_tracking_events WHERE shipment_id=? ORDER BY created_at DESC', [req.params.id])
     res.json({ shipment, tracking_events: events })
   } catch (e) {
@@ -280,7 +338,14 @@ app.get('/api/tracking', async (req, res) => {
     if (!number) return res.status(400).json({ error: 'Missing number' })
     const rows = await query('SELECT * FROM wahl_shipments WHERE tracking_number=?', [number])
     if (!rows.length) return res.json(null)
-    const shipment = rows[0]
+    const shipmentRaw = rows[0]
+    const carrier = shipmentRaw.carrier_id ? (await query('SELECT id, name FROM wahl_carriers WHERE id=?', [shipmentRaw.carrier_id]))[0] || null : null
+    const shipment = {
+      ...shipmentRaw,
+      sender_address: typeof shipmentRaw.sender_address === 'string' ? JSON.parse(shipmentRaw.sender_address) : shipmentRaw.sender_address,
+      recipient_address: typeof shipmentRaw.recipient_address === 'string' ? JSON.parse(shipmentRaw.recipient_address) : shipmentRaw.recipient_address,
+      carrier,
+    }
     const events = await query('SELECT * FROM wahl_tracking_events WHERE shipment_id=? ORDER BY created_at DESC', [shipment.id])
     res.json({ shipment, tracking_events: events })
   } catch (e) {

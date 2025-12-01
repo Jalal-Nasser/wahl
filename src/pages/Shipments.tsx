@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Plus, Package, Truck, Clock, CheckCircle, XCircle, Eye, Download, Calendar, MapPin } from 'lucide-react';
+import { Search, Filter, Plus, Package, Truck, Clock, CheckCircle, XCircle, Eye, Download } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAuthStore } from '../stores/authStore';
 import { Shipment } from '../types/database';
@@ -46,17 +46,20 @@ const Shipments: React.FC = () => {
       const now = new Date();
       
       switch (dateFilter) {
-        case 'today':
+        case 'today': {
           matchesDate = shipmentDate.toDateString() === now.toDateString();
           break;
-        case 'week':
+        }
+        case 'week': {
           const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           matchesDate = shipmentDate >= weekAgo;
           break;
-        case 'month':
+        }
+        case 'month': {
           const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
           matchesDate = shipmentDate >= monthAgo;
           break;
+        }
       }
     }
 
