@@ -65,8 +65,6 @@ function PublicAnalytics() {
     '/clients',
     '/contact',
     '/blog',
-    '/login',
-    '/register',
   ])
   const isPublic = publicPaths.has(path) || path.startsWith('/blog/')
   return isPublic ? <VercelAnalytics /> : null

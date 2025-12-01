@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Package, Mail, Lock, Eye, EyeOff } from 'lucide-react'
@@ -7,6 +7,8 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [cfToken, setCfToken] = useState('')
+  const [formError, setFormError] = useState<string | null>(null)
   
   const { login, isLoading, error } = useAuthStore()
   const navigate = useNavigate()
@@ -14,7 +16,13 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await login(email, password)
+      const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+      if (siteKey && !cfToken) {
+        setFormError('Please complete verification')
+        return
+      }
+      setFormError(null)
+      await login(email, password, cfToken)
       navigate('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
@@ -42,9 +50,9 @@ export default function Login() {
             <p className="text-gray-600">Sign in to your account</p>
           </div>
 
-          {error && (
+          {(error || formError) && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm">{error}</p>
+              <p className="text-red-600 text-sm">{formError || error}</p>
             </div>
           )}
 
@@ -119,6 +127,8 @@ export default function Login() {
               </div>
             </div>
 
+            <div id="turnstile-widget" className="mt-2" />
+
             <button
               type="submit"
               disabled={isLoading}
@@ -159,3 +169,28 @@ export default function Login() {
     </div>
   )
 }
+  useEffect(() => {
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+    if (!siteKey) return
+    const scriptId = 'cf-turnstile'
+    function render() {
+      const el = document.getElementById('turnstile-widget') as HTMLElement | null
+      const t = (window as any).turnstile
+      if (el && t) {
+        t.render(el, {
+          sitekey: siteKey,
+          callback: (token: string) => setCfToken(token),
+        })
+      }
+    }
+    if (!document.getElementById(scriptId)) {
+      const s = document.createElement('script')
+      s.id = scriptId
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+      s.async = true
+      s.onload = render
+      document.body.appendChild(s)
+    } else {
+      render()
+    }
+  }, [])

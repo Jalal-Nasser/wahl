@@ -7,7 +7,7 @@ interface AuthState {
   isLoading: boolean
   error: string | null
   
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string, cfToken?: string) => Promise<void>
   register: (email: string, password: string, fullName: string) => Promise<void>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
@@ -18,10 +18,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: false,
   error: null,
 
-  login: async (email: string, password: string) => {
+  login: async (email: string, password: string, cfToken?: string) => {
     set({ isLoading: true, error: null })
     try {
-      const resp = await api.auth.login(email, password)
+      const resp = await api.auth.login(email, password, cfToken)
       if (resp?.user) {
         set({ user: resp.user, isLoading: false })
       } else {

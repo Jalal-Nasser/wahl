@@ -226,7 +226,23 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password, cf_token } = req.body
+    const secret = process.env.TURNSTILE_SECRET_KEY || ''
+    if (secret) {
+      if (!cf_token) return res.status(400).json({ error: 'Verification required' })
+      try {
+        const params = new URLSearchParams({ secret, response: cf_token, remoteip: req.ip })
+        const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+        })
+        const outcome = await verify.json()
+        if (!outcome?.success) return res.status(400).json({ error: 'Verification failed' })
+      } catch (err) {
+        return res.status(400).json({ error: 'Verification error' })
+      }
+    }
     const rows = await query('SELECT * FROM wahl_users WHERE email=?', [email])
     if (!rows.length) return res.status(401).json({ error: 'Invalid credentials' })
     const user = rows[0]

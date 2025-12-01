@@ -28,8 +28,8 @@ export const api = {
       if (data?.token) setToken(data.token)
       return data
     },
-    async login(email: string, password: string) {
-      const data = await request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) })
+    async login(email: string, password: string, cf_token?: string) {
+      const data = await request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password, cf_token }) })
       if (data?.token) setToken(data.token)
       return data
     },
