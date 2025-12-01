@@ -1,11 +1,32 @@
 node_modules/
 dist/
+build/
 .vercel/
 .trae/
 .DS_Store
 *.log
-*.env
-**/.env
-**/.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.pem
 /.idea/
 /.vscode/
+
+# env files
+.env
+.env*.local
+**/.env
+**/.env.*
+
+# PnP/coverage
+/.pnp
+.pnp.js
+/coverage
+
+# Next.js (not used, safe to ignore)
+/.next/
+/out/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
