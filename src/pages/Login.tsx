@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Package, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
@@ -138,33 +138,10 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <Link
-                to="/register"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Create new account
-              </Link>
-            </div>
-          </div>
+          {/* Registration disabled: accounts are created by admin invite */}
         </div>
 
-        {/* Demo Credentials */}
-        <div className="mt-6 text-center">
-          <p className="text-blue-100 text-sm">
-            Demo: Use any email and password to test
-          </p>
-        </div>
+        {/* Demo note removed for production readiness */}
       </div>
     </div>
   )

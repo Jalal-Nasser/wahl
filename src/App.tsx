@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import Layout from '@/components/Layout'
 import Login from '@/pages/Login'
-import Register from '@/pages/Register'
 import Dashboard from '@/pages/Dashboard'
 import Shipments from '@/pages/Shipments'
 import CreateShipment from '@/pages/CreateShipment'
@@ -37,7 +36,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
-        <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+        {/* Registration removed: admin invites only */}
         
         {/* Protected routes */}
         <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>

@@ -45,6 +45,25 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Ensure an initial admin user exists if configured
+;(async function ensureAdmin() {
+  try {
+    const email = process.env.ADMIN_EMAIL
+    const password = process.env.ADMIN_PASSWORD
+    const full_name = process.env.ADMIN_FULL_NAME || 'Administrator'
+    if (!email || !password) return
+    const rows = await query('SELECT id FROM wahl_users WHERE email=? AND role=?', [email, 'admin'])
+    if (!rows.length) {
+      const id = crypto.randomUUID().replace(/-/g, '')
+      const hash = await bcrypt.hash(password, 10)
+      await query('INSERT INTO wahl_users (id,email,full_name,role,password_hash) VALUES (?,?,?,?,?)', [id, email, full_name, 'admin', hash])
+      console.log('Admin user initialized')
+    }
+  } catch (e) {
+    // silent
+  }
+})()
+
 // Site settings
 app.get('/api/site-settings', async (req, res) => {
   try {
@@ -208,17 +227,17 @@ app.post('/api/upload', async (req, res) => {
   }
 })
 // Auth
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', authMiddleware, async (req, res) => {
   try {
-    const { email, password, full_name } = req.body
+    if (!req.user || req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const { email, password, full_name, role = 'shipper' } = req.body
     if (!email || !password || !full_name) return res.status(400).json({ error: 'Missing fields' })
     const existing = await query('SELECT id FROM wahl_users WHERE email=?', [email])
     if (existing.length) return res.status(409).json({ error: 'Email already registered' })
     const id = crypto.randomUUID().replace(/-/g, '')
     const hash = await bcrypt.hash(password, 10)
-    await query('INSERT INTO wahl_users (id,email,full_name,role,password_hash) VALUES (?,?,?,?,?)', [id, email, full_name, 'shipper', hash])
-    const token = jwt.sign({ id, email, role: 'shipper' }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
-    res.json({ token, user: { id, email, full_name, role: 'shipper' } })
+    await query('INSERT INTO wahl_users (id,email,full_name,role,password_hash) VALUES (?,?,?,?,?)', [id, email, full_name, role, hash])
+    res.json({ ok: true, user: { id, email, full_name, role } })
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
