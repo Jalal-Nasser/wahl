@@ -60,13 +60,8 @@ export default function Login() {
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-white rounded-full p-3 shadow-sm">
-              <img src="/logo.png" alt="WAHL" className="h-10 w-10 object-contain" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">WAHL</h1>
-          <p className="text-blue-100">Ship Smarter, Deliver Faster</p>
+          <img src="/logo.png" alt="WAHL" className="mx-auto h-28 w-auto drop-shadow-xl" />
+          <p className="mt-2 text-blue-100">Ship Smarter, Deliver Faster</p>
         </div>
 
         {/* Login Form */}
