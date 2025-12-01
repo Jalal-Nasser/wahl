@@ -13,6 +13,32 @@ export default function Login() {
   const { login, isLoading, error } = useAuthStore()
   const navigate = useNavigate()
 
+  useEffect(() => {
+    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
+    if (!siteKey) return
+    const scriptId = 'cf-turnstile'
+    function render() {
+      const el = document.getElementById('turnstile-widget') as HTMLElement | null
+      const t = (window as unknown as { turnstile?: TurnstileApi }).turnstile
+      if (el && t) {
+        t.render(el, {
+          sitekey: siteKey,
+          callback: (token: string) => setCfToken(token),
+        })
+      }
+    }
+    if (!document.getElementById(scriptId)) {
+      const s = document.createElement('script')
+      s.id = scriptId
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+      s.async = true
+      s.onload = render
+      document.body.appendChild(s)
+    } else {
+      render()
+    }
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -146,28 +172,6 @@ export default function Login() {
     </div>
   )
 }
-  useEffect(() => {
-    const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
-    if (!siteKey) return
-    const scriptId = 'cf-turnstile'
-    function render() {
-      const el = document.getElementById('turnstile-widget') as HTMLElement | null
-      const t = (window as any).turnstile
-      if (el && t) {
-        t.render(el, {
-          sitekey: siteKey,
-          callback: (token: string) => setCfToken(token),
-        })
-      }
-    }
-    if (!document.getElementById(scriptId)) {
-      const s = document.createElement('script')
-      s.id = scriptId
-      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
-      s.async = true
-      s.onload = render
-      document.body.appendChild(s)
-    } else {
-      render()
-    }
-  }, [])
+interface TurnstileApi {
+  render: (el: HTMLElement, opts: { sitekey: string; callback: (token: string) => void }) => void
+}

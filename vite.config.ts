@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import type { PluginOption } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -17,13 +18,13 @@ export default defineConfig({
     },
   },
   plugins: [
-    react({
+    (react({
       babel: {
         plugins: [
           'react-dev-locator',
         ],
       },
-    }),
-    tsconfigPaths()
+    }) as unknown as PluginOption),
+    (tsconfigPaths() as unknown as PluginOption)
   ],
 })
