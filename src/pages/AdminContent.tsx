@@ -34,7 +34,7 @@ export default function AdminContent() {
     if (user.role !== 'admin') {
       navigate('/dashboard')
     }
-  }, [user])
+  }, [user, navigate])
 
   useEffect(() => {
     const load = async () => {

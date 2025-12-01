@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Plus, Package, Truck, Clock, CheckCircle, XCircle, Eye, Download } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -14,11 +14,9 @@ const Shipments: React.FC = () => {
   const [dateFilter, setDateFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    fetchShipments();
-  }, [user]);
+  
 
-  const fetchShipments = async () => {
+  const fetchShipments = useCallback(async () => {
     if (!user) return;
     try {
       setLoading(true);
@@ -29,7 +27,11 @@ const Shipments: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchShipments();
+  }, [user, fetchShipments]);
 
   const filteredShipments = shipments.filter(shipment => {
     const matchesSearch = 

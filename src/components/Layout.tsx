@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { Package, BarChart3, Truck, Search, User, LogOut, Menu, X, Plus } from 'lucide-react'
+import { BarChart3, Truck, Search, User, LogOut, Menu, X, Plus } from 'lucide-react'
 import { useState } from 'react'
 
 export default function Layout() {
@@ -12,7 +12,7 @@ export default function Layout() {
 
   useEffect(() => {
     checkAuth()
-  }, [])
+  }, [checkAuth])
 
   const handleLogout = async () => {
     try {
@@ -44,8 +44,8 @@ export default function Layout() {
               {/* Logo */}
               <div className="flex-shrink-0 flex items-center">
                 <Link to="/dashboard" className="flex items-center">
-                  <div className="bg-blue-600 p-2 rounded-lg">
-                    <Package className="h-6 w-6 text-white" />
+                  <div className="bg-white p-2 rounded-full shadow-sm">
+                    <img src="/logo.png" alt="WAHL" className="h-8 w-8 object-contain" />
                   </div>
                   <span className="ml-3 text-xl font-bold text-gray-900">WAHL</span>
                 </Link>

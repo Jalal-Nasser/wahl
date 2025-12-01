@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Package, Truck, Clock, CheckCircle, XCircle, MapPin, User, Eye, Download } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -12,13 +12,9 @@ const ShipmentDetails: React.FC = () => {
   const [trackingEvents, setTrackingEvents] = useState<TrackingEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      fetchShipmentDetails();
-    }
-  }, [id]);
+  
 
-  const fetchShipmentDetails = async () => {
+  const fetchShipmentDetails = useCallback(async () => {
     if (!user || !id) return;
 
     try {
@@ -54,7 +50,13 @@ const ShipmentDetails: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchShipmentDetails();
+    }
+  }, [id, fetchShipmentDetails]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Bar, Line, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend, Filler, TooltipItem } from 'chart.js';
 import { TrendingUp, Package, Clock, DollarSign, Download } from 'lucide-react';
@@ -26,11 +26,9 @@ const Analytics: React.FC = () => {
   const [dateRange, setDateRange] = useState('30');
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
 
-  useEffect(() => {
-    fetchShipments();
-  }, [user, dateRange]);
+  
 
-  const fetchShipments = async () => {
+  const fetchShipments = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -57,7 +55,11 @@ const Analytics: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, dateRange]);
+
+  useEffect(() => {
+    fetchShipments();
+  }, [user, dateRange, fetchShipments]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

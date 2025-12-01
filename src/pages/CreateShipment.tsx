@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, MapPin, Truck, DollarSign, User } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -87,12 +87,9 @@ const CreateShipment: React.FC = () => {
     signature_required: false
   });
 
-  useEffect(() => {
-    fetchCarriers();
-    fetchSavedAddresses();
-  }, []);
+  
 
-  const fetchCarriers = async () => {
+  const fetchCarriers = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('carriers')
@@ -104,9 +101,9 @@ const CreateShipment: React.FC = () => {
     } catch (error) {
       console.error('Error fetching carriers:', error);
     }
-  };
+  }, []);
 
-  const fetchSavedAddresses = async () => {
+  const fetchSavedAddresses = useCallback(async () => {
     if (!user) return;
     
     try {
@@ -121,7 +118,12 @@ const CreateShipment: React.FC = () => {
     } catch (error) {
       console.error('Error fetching saved addresses:', error);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchCarriers();
+    fetchSavedAddresses();
+  }, [fetchCarriers, fetchSavedAddresses]);
 
   const generateTrackingNumber = () => {
     const prefix = 'SHP';

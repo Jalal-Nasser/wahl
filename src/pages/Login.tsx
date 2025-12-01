@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { Package, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -61,8 +61,8 @@ export default function Login() {
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full">
-              <Package className="h-8 w-8 text-blue-600" />
+            <div className="bg-white rounded-full p-3 shadow-sm">
+              <img src="/logo.png" alt="WAHL" className="h-10 w-10 object-contain" />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">WAHL</h1>
