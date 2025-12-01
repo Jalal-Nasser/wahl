@@ -27,7 +27,8 @@ const pool = mysql.createPool({
 
 // Helpers
 async function query(sql, params) {
-  const [rows] = await pool.execute(sql, params)
+  // Use pool.query so multi-statement scripts (e.g. install schema + seed) run correctly
+  const [rows] = await pool.query(sql, params)
   return rows
 }
 
