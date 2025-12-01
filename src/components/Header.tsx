@@ -58,12 +58,8 @@ export default function Header() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <div className="text-2xl font-bold text-blue-900">
-              WAHL
-            </div>
-            <div className="ml-2 text-sm text-gray-600">
-              Logistics Solutions
-            </div>
+            <img src="/logo.png" alt="WAHL" className="h-10 w-auto" />
+            <div className="ml-3 text-sm text-gray-600">Logistics Solutions</div>
           </Link>
 
           {/* Desktop Navigation */}

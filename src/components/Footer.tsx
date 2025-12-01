@@ -9,12 +9,8 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <div className="mb-6">
-              <div className="text-2xl font-bold text-blue-400 mb-2">
-                WAHL
-              </div>
-              <div className="text-sm text-gray-400">
-                Logistics Solutions
-              </div>
+              <img src="/logo.png" alt="WAHL" className="h-12 w-auto mb-2" />
+              <div className="text-sm text-gray-400">Logistics Solutions</div>
             </div>
             <p className="text-gray-300 mb-6">
               Your trusted partner for comprehensive logistics solutions. 
