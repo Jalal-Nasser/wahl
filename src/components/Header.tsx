@@ -59,7 +59,7 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img src="/logo.png" alt="WAHL" className="h-10 w-auto" />
-            <span className="ml-3 font-bold text-gray-900 text-[17px] tracking-[0.2px]">WAHL Logistics Solutions</span>
+            <span className="ml-3 font-bold text-[#1e3a8a] text-[17px] tracking-[0.2px]">WAHL Logistics وهل اللوجيستية</span>
           </Link>
 
           {/* Desktop Navigation */}
