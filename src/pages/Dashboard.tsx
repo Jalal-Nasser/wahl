@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { Shipment, AnalyticsData } from '@/types/database'
@@ -7,14 +7,17 @@ import { Package, Truck, Clock, DollarSign, TrendingUp, Plus, Eye, LucideIcon } 
 
 export default function Dashboard() {
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const [shipments, setShipments] = useState<Shipment[]>([])
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (user) {
-      loadDashboardData()
+    if (!user) {
+      navigate('/login')
+      return
     }
+    loadDashboardData()
   }, [user])
 
   const loadDashboardData = async () => {
