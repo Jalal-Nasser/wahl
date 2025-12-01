@@ -1,0 +1,66 @@
+import { create } from 'zustand'
+import { api } from '@/lib/api'
+import { User } from '@/types/database'
+
+interface AuthState {
+  user: User | null
+  isLoading: boolean
+  error: string | null
+  
+  login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string, fullName: string) => Promise<void>
+  logout: () => Promise<void>
+  checkAuth: () => Promise<void>
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isLoading: false,
+  error: null,
+
+  login: async (email: string, password: string) => {
+    set({ isLoading: true, error: null })
+    try {
+      const resp = await api.auth.login(email, password)
+      if (resp?.user) {
+        set({ user: resp.user, isLoading: false })
+      } else {
+        set({ isLoading: false })
+      }
+    } catch (error) {
+      set({ error: (error as Error).message, isLoading: false })
+      throw error
+    }
+  },
+
+  register: async (email: string, password: string, fullName: string) => {
+    set({ isLoading: true, error: null })
+    try {
+      const resp = await api.auth.register(email, password, fullName)
+      if (resp?.user) {
+        set({ user: resp.user, isLoading: false })
+      } else {
+        set({ isLoading: false })
+      }
+    } catch (error) {
+      set({ error: (error as Error).message, isLoading: false })
+      throw error
+    }
+  },
+
+  logout: async () => {
+    set({ isLoading: true })
+    api.auth.logout()
+    set({ user: null, isLoading: false })
+  },
+
+  checkAuth: async () => {
+    set({ isLoading: true })
+    try {
+      const me = await api.auth.me()
+      set({ user: me || null, isLoading: false })
+    } catch (error) {
+      set({ user: null, isLoading: false })
+    }
+  },
+}))

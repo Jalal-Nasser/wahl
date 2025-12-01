@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.trae/
+.DS_Store
+*.log
+*.env
+**/.env
+**/.env.*
+/.idea/
+/.vscode/
