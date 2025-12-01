@@ -8,9 +8,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="mb-6 text-center">
-              <img src="/logo.png" alt="WAHL" className="h-12 w-auto mb-2" style={{ filter: 'brightness(0) invert(1)' }} />
-              <div className="text-sm font-bold text-white">WAHL Logistics وهل اللوجيستية</div>
+            <div className="mb-6 flex flex-col items-center">
+              <div className="relative mb-2">
+                <img src="/logo.png" alt="WAHL" className="h-12 w-auto" style={{ filter: 'brightness(0) invert(1)' }} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full" style={{ backgroundColor: '#111827' }}></div>
+                  <span className="absolute text-white font-extrabold text-base">W</span>
+                </div>
+              </div>
+              <div className="text-sm font-bold text-white text-center">WAHL Logistics وهل اللوجيستية</div>
             </div>
             <p className="text-gray-300 mb-6">
               Your trusted partner for comprehensive logistics solutions. 
