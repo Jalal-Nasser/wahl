@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { api } from '@/lib/api'
+import { supabase } from '@/lib/supabase'
 import { User } from '@/types/database'
 
 interface AuthState {
@@ -20,16 +21,25 @@ export const useAuthStore = create<AuthState>((set) => ({
   error: null,
   errorCode: null,
 
-  login: async (email: string, password: string, cfToken?: string) => {
+  login: async (email: string, password: string) => {
     set({ isLoading: true, error: null, errorCode: null })
     try {
-      const resp = await api.auth.login(email, password, cfToken)
-      if (resp?.user) {
-        set({ user: resp.user, isLoading: false, error: null, errorCode: null })
-      } else {
-        set({ isLoading: false })
+      const exists = await supabase.from('users').select('id').eq('email', email).maybeSingle()
+      if (!exists.data) {
+        set({ isLoading: false, error: "This account does not exist. Please check your credentials or contact support", errorCode: 'ACCOUNT_NOT_FOUND' })
+        throw new Error('ACCOUNT_NOT_FOUND')
       }
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+      if (signInError) {
+        set({ isLoading: false, error: "The password you entered is incorrect. Please try again or click 'Forgot Password'", errorCode: 'INCORRECT_PASSWORD' })
+        throw new Error('INCORRECT_PASSWORD')
+      }
+      const userId = signInData.user?.id || exists.data.id
+      const profile = await supabase.from('users').select('*').eq('id', userId).maybeSingle()
+      const u = profile.data as unknown as User | null
+      set({ user: u, isLoading: false, error: null, errorCode: null })
     } catch (error) {
+      if ((error as Error).message === 'ACCOUNT_NOT_FOUND' || (error as Error).message === 'INCORRECT_PASSWORD') return
       set({ error: (error as Error).message, errorCode: (error as (Error & { code?: string }))?.code || null, isLoading: false })
       throw error
     }
@@ -59,9 +69,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true })
     try {
-      const me = await api.auth.me()
-      const isValid = typeof me === 'object' && me !== null && 'id' in (me as Record<string, unknown>) && 'email' in (me as Record<string, unknown>)
-      set({ user: isValid ? (me as User) : null, isLoading: false })
+      const { data } = await supabase.auth.getUser()
+      const authUser = data.user
+      if (!authUser) { set({ user: null, isLoading: false }); return }
+      const profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+      const u = profile.data as unknown as User | null
+      set({ user: u, isLoading: false })
     } catch {
       set({ user: null, isLoading: false })
     }

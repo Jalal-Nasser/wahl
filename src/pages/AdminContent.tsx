@@ -6,6 +6,7 @@ import { addClient, addHeroSlide, deleteClient, deleteHeroSlide, getClients, get
 import { SiteSettings, HeroSlide, ClientLogo } from '@/types/database'
 import { Plus, Trash2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { api } from '@/lib/api'
 
 export default function AdminContent() {
   const { user } = useAuthStore()
@@ -25,6 +26,10 @@ export default function AdminContent() {
   const [clients, setClients] = useState<ClientLogo[]>([])
   const [newSlide, setNewSlide] = useState({ image_url: '', title: '', subtitle: '', sort_order: 0 })
   const [newClient, setNewClient] = useState({ name: '', logo_url: '', sort_order: 0 })
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteName, setInviteName] = useState('')
+  const [inviteRole, setInviteRole] = useState<'shipper' | 'carrier' | 'admin'>('shipper')
+  const [inviteMsg, setInviteMsg] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) {
@@ -106,6 +111,22 @@ export default function AdminContent() {
     await deleteClient(id)
     const data = await getClients()
     setClients((data as ClientLogo[] | null) || [])
+  }
+
+  const sendInvite = async () => {
+    setInviteMsg(null)
+    if (!inviteEmail || !inviteName) { setInviteMsg('Please enter email and full name'); return }
+    try {
+      const res = await api.admin.invite(inviteEmail, inviteName, inviteRole)
+      if (res?.ok) {
+        setInviteMsg('Invitation sent successfully')
+        setInviteEmail(''); setInviteName(''); setInviteRole('shipper')
+      } else {
+        setInviteMsg('Failed to send invitation')
+      }
+    } catch (e) {
+      setInviteMsg((e as Error).message)
+    }
   }
 
   return (
@@ -205,6 +226,28 @@ export default function AdminContent() {
                   Add Slide
                 </button>
               </div>
+            </div>
+          </div>
+
+          <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">User Invitations</h2>
+            {inviteMsg && (
+              <div className="mb-4 p-3 rounded-md border text-sm ${inviteMsg.includes('success') ? 'border-green-200 bg-green-50 text-green-700' : 'border-red-200 bg-red-50 text-red-700'}">
+                {inviteMsg}
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <input placeholder="User Email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} className="border rounded-md px-3 py-2" />
+              <input placeholder="Full Name" value={inviteName} onChange={(e) => setInviteName(e.target.value)} className="border rounded-md px-3 py-2" />
+              <select value={inviteRole} onChange={(e) => { const v = e.target.value; if (v === 'shipper' || v === 'carrier' || v === 'admin') setInviteRole(v); }} className="border rounded-md px-3 py-2">
+                <option value="shipper">Shipper</option>
+                <option value="carrier">Carrier</option>
+                <option value="admin">Admin</option>
+              </select>
+              <button onClick={sendInvite} className="bg-blue-600 text-white px-4 py-2 rounded-md inline-flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                Send Invite
+              </button>
             </div>
           </div>
 

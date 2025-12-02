@@ -50,7 +50,7 @@ export default function Login() {
         return
       }
       setFormError(null)
-      await login(email, password, cfToken)
+      await login(email, password)
       navigate('/dashboard')
     } catch (error) {
       console.error('Login error:', error)
