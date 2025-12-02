@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { addClient, addHeroSlide, deleteClient, deleteHeroSlide, getClients, getHeroSlides, getSiteSettings, upsertSiteSettings } from '@/lib/contentProvider'
-import { SiteSettings, HeroSlide, ClientLogo } from '@/types/database'
+import { SiteSettings, HeroSlide, ClientLogo, ContentSection } from '@/types/database'
 import { Plus, Trash2 } from 'lucide-react'
+import Editor from '@/components/Editor'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/lib/api'
 
@@ -30,6 +31,11 @@ export default function AdminContent() {
   const [inviteName, setInviteName] = useState('')
   const [inviteRole, setInviteRole] = useState<'shipper' | 'carrier' | 'admin'>('shipper')
   const [inviteMsg, setInviteMsg] = useState<string | null>(null)
+  const [sections, setSections] = useState<ContentSection[]>([])
+  const [newSection, setNewSection] = useState({ slug: '', title: '', seo_title: '', seo_description: '' })
+  const [activeSection, setActiveSection] = useState<ContentSection | null>(null)
+  const [editorHtml, setEditorHtml] = useState('')
+  const [scheduleAt, setScheduleAt] = useState('')
 
   useEffect(() => {
     if (!user) {
@@ -61,6 +67,13 @@ export default function AdminContent() {
 
       const cl = await getClients()
       setClients((cl as ClientLogo[] | null) || [])
+
+      try {
+        const s = await api.cms.listSections()
+        setSections(Array.isArray(s) ? (s as ContentSection[]) : [])
+      } catch {
+        // ignore load error
+      }
     }
     load()
   }, [])
@@ -111,6 +124,33 @@ export default function AdminContent() {
     await deleteClient(id)
     const data = await getClients()
     setClients((data as ClientLogo[] | null) || [])
+  }
+
+  const createSection = async () => {
+    if (!newSection.slug || !newSection.title) return
+    await api.cms.createSection({ ...newSection, body_html: '' })
+    const list = await api.cms.listSections()
+    setSections(Array.isArray(list) ? (list as ContentSection[]) : [])
+    setNewSection({ slug: '', title: '', seo_title: '', seo_description: '' })
+  }
+
+  const openSection = async (id: string) => {
+    const s = await api.cms.getSection(id) as ContentSection
+    setActiveSection(s)
+    setEditorHtml(s?.body_html || '')
+    setScheduleAt(s?.schedule_at ? String(s.schedule_at).slice(0,16) : '')
+  }
+
+  const saveSection = async () => {
+    if (!activeSection) return
+    await api.cms.updateSection(activeSection.id, { title: activeSection.title, seo_title: activeSection.seo_title, seo_description: activeSection.seo_description, body_html: editorHtml })
+    const list = await api.cms.listSections()
+    setSections(Array.isArray(list) ? (list as ContentSection[]) : [])
+  }
+
+  const schedulePublish = async () => {
+    if (!activeSection || !scheduleAt) return
+    await api.cms.publishSchedule(activeSection.id, new Date(scheduleAt).toISOString())
   }
 
   const sendInvite = async () => {
@@ -288,6 +328,50 @@ export default function AdminContent() {
               <Plus className="w-4 h-4" />
               Add Client
             </button>
+          </div>
+
+          <div className="mt-8 bg-white rounded-lg shadow-sm border p-6">
+            <h2 className="text-xl font-semibold mb-4">Pages</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="md:col-span-1 space-y-3">
+                <div className="border rounded-md p-3">
+                  <div className="text-sm font-medium mb-2">Create Page</div>
+                  <input placeholder="Slug" value={newSection.slug} onChange={(e) => setNewSection({ ...newSection, slug: e.target.value })} className="border rounded-md px-3 py-2 w-full mb-2" />
+                  <input placeholder="Title" value={newSection.title} onChange={(e) => setNewSection({ ...newSection, title: e.target.value })} className="border rounded-md px-3 py-2 w-full mb-2" />
+                  <input placeholder="SEO Title" value={newSection.seo_title} onChange={(e) => setNewSection({ ...newSection, seo_title: e.target.value })} className="border rounded-md px-3 py-2 w-full mb-2" />
+                  <input placeholder="SEO Description" value={newSection.seo_description} onChange={(e) => setNewSection({ ...newSection, seo_description: e.target.value })} className="border rounded-md px-3 py-2 w-full mb-2" />
+                  <button onClick={createSection} className="bg-blue-600 text-white px-4 py-2 rounded-md">Create</button>
+                </div>
+                <div className="border rounded-md p-3">
+                  <div className="text-sm font-medium mb-2">All Pages</div>
+                  <div className="space-y-2">
+                    {sections.map((s) => (
+                      <button key={s.id} onClick={() => openSection(s.id)} className="block w-full text-left px-3 py-2 border rounded-md hover:bg-gray-50">
+                        {s.title} • {s.slug}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="md:col-span-2">
+                {activeSection ? (
+                  <div className="space-y-3">
+                    <input value={activeSection.title} onChange={(e) => setActiveSection({ ...activeSection, title: e.target.value })} className="border rounded-md px-3 py-2 w-full" />
+                    <input placeholder="SEO Title" value={activeSection.seo_title || ''} onChange={(e) => setActiveSection({ ...activeSection, seo_title: e.target.value })} className="border rounded-md px-3 py-2 w-full" />
+                    <input placeholder="SEO Description" value={activeSection.seo_description || ''} onChange={(e) => setActiveSection({ ...activeSection, seo_description: e.target.value })} className="border rounded-md px-3 py-2 w-full" />
+                    <div className="text-sm text-gray-600">Content</div>
+                    <Editor value={editorHtml} onChange={setEditorHtml} />
+                    <div className="flex items-center gap-3">
+                      <input type="datetime-local" value={scheduleAt} onChange={(e) => setScheduleAt(e.target.value)} className="border rounded-md px-3 py-2" />
+                      <button onClick={schedulePublish} className="px-3 py-2 rounded-md border">Schedule Publish</button>
+                      <button onClick={saveSection} className="px-3 py-2 rounded-md bg-blue-600 text-white">Save</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-500">Select a page to edit</div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>

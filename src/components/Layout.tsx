@@ -94,7 +94,7 @@ export default function Layout() {
                   <div className="bg-gray-200 p-2 rounded-full">
                     <User className="h-4 w-4 text-gray-600" />
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user?.full_name}</span>
+                  <Link to="/profile" className="text-sm font-medium text-gray-700 hover:text-blue-700">{user?.full_name}</Link>
                   <button
                     onClick={handleLogout}
                     className="p-2 text-gray-400 hover:text-gray-500"

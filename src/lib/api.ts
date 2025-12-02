@@ -32,12 +32,22 @@ export const api = {
   setToken,
   admin: {
     async invite(email: string, full_name: string, role: string) {
-      const { data } = await supabase.auth.getSession()
-      const access = data.session?.access_token || ''
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-      if (access) headers['Authorization'] = `Bearer ${access}`
-      return request('/admin/invite', { method: 'POST', headers, body: JSON.stringify({ email, full_name, role }) })
+      return request('/auth/register', { method: 'POST', body: JSON.stringify({ email, password: cryptoRandom(), full_name, role }) }, true)
     }
+  },
+  profile: {
+    get() { return request('/profile', {}, true) },
+    update(payload: Record<string, unknown>) { return request('/profile', { method: 'PUT', body: JSON.stringify(payload) }, true) }
+  },
+  cms: {
+    listSections() { return request('/cms/sections', {}, true) },
+    getSection(id: string) { return request(`/cms/sections/${id}`, {}, true) },
+    createSection(payload: Record<string, unknown>) { return request('/cms/sections', { method: 'POST', body: JSON.stringify(payload) }, true) },
+    updateSection(id: string, payload: Record<string, unknown>) { return request(`/cms/sections/${id}`, { method: 'PUT', body: JSON.stringify(payload) }, true) },
+    deleteSection(id: string) { return request(`/cms/sections/${id}`, { method: 'DELETE' }, true) },
+    listVersions(id: string) { return request(`/cms/sections/${id}/versions`, {}, true) },
+    restoreVersion(id: string, versionId: string) { return request(`/cms/sections/${id}/versions/${versionId}/restore`, { method: 'POST' }, true) },
+    publishSchedule(id: string, whenISO: string) { return request(`/cms/sections/${id}/schedule`, { method: 'POST', body: JSON.stringify({ publish_at: whenISO }) }, true) }
   },
   profiles: {
     async provision(email: string, full_name: string, role: string) {
@@ -79,3 +89,4 @@ export const api = {
   },
 }
 import { supabase } from '@/lib/supabase'
+function cryptoRandom() { return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2) }

@@ -16,6 +16,7 @@ import Clients from '@/pages/Clients'
 import Contact from '@/pages/Contact'
 import Blog from '@/pages/Blog'
 import AdminContent from '@/pages/AdminContent'
+import Profile from '@/pages/Profile'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         {/* Protected routes */}
         <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="shipments" element={<Shipments />} />
           <Route path="shipments/create" element={<CreateShipment />} />
           <Route path="shipments/:id" element={<ShipmentDetails />} />

@@ -8,6 +8,19 @@ export interface User {
   updated_at: string;
 }
 
+export interface UserSettings {
+  user_id: string;
+  bio?: string;
+  avatar_url?: string;
+  theme?: 'light' | 'dark' | 'system';
+  notifications?: {
+    email?: boolean;
+    sms?: boolean;
+    push?: boolean;
+  };
+  updated_at: string;
+}
+
 export interface Carrier {
   id: string;
   name: string;
@@ -151,4 +164,17 @@ export interface ClientLogo {
   sort_order: number;
   active: boolean;
   created_at: string;
+}
+
+export interface ContentSection {
+  id: string;
+  slug: string;
+  title: string;
+  body_html: string;
+  seo_title?: string;
+  seo_description?: string;
+  published_at?: string;
+  schedule_at?: string;
+  updated_by?: string;
+  updated_at: string;
 }

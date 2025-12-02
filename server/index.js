@@ -320,11 +320,157 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 })
 
+// Profile
+app.get('/api/profile', authMiddleware, async (req, res) => {
+  try {
+    const base = await query('SELECT id,email,full_name,phone,role FROM wahl_users WHERE id=?', [req.user.id])
+    const prefs = await query('SELECT bio, avatar_url, theme, notifications_json, updated_at FROM wahl_user_settings WHERE user_id=?', [req.user.id])
+    const row = prefs[0] || {}
+    res.json({
+      id: base[0]?.id,
+      email: base[0]?.email,
+      full_name: base[0]?.full_name,
+      phone: base[0]?.phone || null,
+      role: base[0]?.role,
+      bio: row.bio || null,
+      avatar_url: row.avatar_url || null,
+      theme: row.theme || 'system',
+      notifications: row.notifications_json ? JSON.parse(row.notifications_json) : {},
+      updated_at: row.updated_at || null,
+    })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.put('/api/profile', authMiddleware, async (req, res) => {
+  try {
+    const { full_name, phone, bio, avatar_url, theme, notifications } = req.body
+    if (typeof full_name === 'string') {
+      await query('UPDATE wahl_users SET full_name=?, phone=COALESCE(?, phone) WHERE id=?', [full_name, phone || null, req.user.id])
+    }
+    const existing = await query('SELECT user_id FROM wahl_user_settings WHERE user_id=?', [req.user.id])
+    const notifStr = notifications ? JSON.stringify(notifications) : null
+    if (existing.length) {
+      await query('UPDATE wahl_user_settings SET bio=?, avatar_url=?, theme=?, notifications_json=?, updated_at=NOW() WHERE user_id=?', [bio || null, avatar_url || null, theme || 'system', notifStr, req.user.id])
+    } else {
+      await query('INSERT INTO wahl_user_settings (user_id,bio,avatar_url,theme,notifications_json,updated_at) VALUES (?,?,?,?,?,NOW())', [req.user.id, bio || null, avatar_url || null, theme || 'system', notifStr])
+    }
+    await query('INSERT INTO wahl_audit_logs (id,user_id,action,target,created_at) VALUES (?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.user.id, 'profile_update', req.user.id])
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
 // Carriers
 app.get('/api/carriers', async (req, res) => {
   try {
     const rows = await query('SELECT * FROM wahl_carriers WHERE is_active=1 ORDER BY name')
     res.json(rows)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+// CMS
+const cmsCache = { sections: null, ts: 0 }
+app.get('/api/cms/sections', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const now = Date.now()
+    if (cmsCache.sections && now - cmsCache.ts < 5000) return res.json(cmsCache.sections)
+    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections ORDER BY updated_at DESC')
+    cmsCache.sections = rows
+    cmsCache.ts = now
+    res.json(rows)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.get('/api/cms/sections/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections WHERE id=?', [req.params.id])
+    res.json(rows[0] || null)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/cms/sections', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const { slug, title, body_html, seo_title, seo_description } = req.body
+    if (!slug || !title) return res.status(400).json({ error: 'Missing slug or title' })
+    const id = crypto.randomUUID().replace(/-/g, '')
+    await query('INSERT INTO wahl_content_sections (id,slug,title,body_html,seo_title,seo_description,updated_by,updated_at) VALUES (?,?,?,?,?,?,?,NOW())', [id, slug, title, body_html || '', seo_title || null, seo_description || null, req.user.id])
+    cmsCache.sections = null
+    res.json({ id })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.put('/api/cms/sections/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const prev = await query('SELECT * FROM wahl_content_sections WHERE id=?', [req.params.id])
+    if (!prev.length) return res.status(404).json({ error: 'Not found' })
+    await query('INSERT INTO wahl_content_versions (id,section_id,version,body_html,updated_by,created_at) VALUES (?,?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.params.id, (prev[0].version || 0) + 1, prev[0].body_html || '', req.user.id])
+    const { title, body_html, seo_title, seo_description } = req.body
+    await query('UPDATE wahl_content_sections SET title=COALESCE(?, title), body_html=COALESCE(?, body_html), seo_title=COALESCE(?, seo_title), seo_description=COALESCE(?, seo_description), updated_by=?, updated_at=NOW() WHERE id=?', [title || null, body_html || null, seo_title || null, seo_description || null, req.user.id, req.params.id])
+    cmsCache.sections = null
+    await query('INSERT INTO wahl_audit_logs (id,user_id,action,target,created_at) VALUES (?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.user.id, 'content_update', req.params.id])
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.delete('/api/cms/sections/:id', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    await query('DELETE FROM wahl_content_sections WHERE id=?', [req.params.id])
+    cmsCache.sections = null
+    await query('INSERT INTO wahl_audit_logs (id,user_id,action,target,created_at) VALUES (?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.user.id, 'content_delete', req.params.id])
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.get('/api/cms/sections/:id/versions', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const rows = await query('SELECT id,version,body_html,updated_by,created_at FROM wahl_content_versions WHERE section_id=? ORDER BY version DESC', [req.params.id])
+    res.json(rows)
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/cms/sections/:id/versions/:versionId/restore', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const ver = await query('SELECT * FROM wahl_content_versions WHERE id=? AND section_id=?', [req.params.versionId, req.params.id])
+    if (!ver.length) return res.status(404).json({ error: 'Not found' })
+    await query('UPDATE wahl_content_sections SET body_html=?, updated_by=?, updated_at=NOW() WHERE id=?', [ver[0].body_html || '', req.user.id, req.params.id])
+    cmsCache.sections = null
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/cms/sections/:id/schedule', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
+    const { publish_at } = req.body
+    if (!publish_at) return res.status(400).json({ error: 'Missing publish_at' })
+    await query('UPDATE wahl_content_sections SET schedule_at=? WHERE id=?', [new Date(publish_at), req.params.id])
+    res.json({ ok: true })
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
