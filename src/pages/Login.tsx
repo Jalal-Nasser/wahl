@@ -208,6 +208,10 @@ export default function Login() {
 
         {/* Demo note removed for production readiness */}
       </div>
+      <div className="absolute bottom-4 left-0 right-0 z-10 text-center text-blue-100 text-xs sm:text-sm">
+        © 2026 WAHL Logistics Solutions. All rights reserved. Designed by
+        <a href="https://github.com/Jalal-Nasser" target="_blank" rel="noopener noreferrer" className="underline hover:text-white ml-1">Jalal Nasser</a>
+      </div>
     </div>
   )
 }

@@ -8,6 +8,9 @@ export default function LanguageSwitcher() {
     const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('i18nextLng')) || ''
     const lng = saved || i18n.language
     if (lng && lng !== i18n.language) i18n.changeLanguage(lng)
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('dir', (lng || i18n.language).startsWith('ar') ? 'rtl' : 'ltr')
+    }
   }, [i18n])
 
   const current = i18n.language.startsWith('ar') ? 'ar' : 'en'
@@ -16,6 +19,9 @@ export default function LanguageSwitcher() {
     const next = current === 'ar' ? 'en' : 'ar'
     i18n.changeLanguage(next)
     try { localStorage.setItem('i18nextLng', next) } catch { void 0 }
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('dir', next === 'ar' ? 'rtl' : 'ltr')
+    }
   }
 
   return (
