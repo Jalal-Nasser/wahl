@@ -1,0 +1,134 @@
+{
+  "brand": "WAHL Logistics",
+  "slogan": "Ship Smarter, Deliver Faster",
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "clients": "Our Clients",
+    "contact": "Contact",
+    "blog": "Blog",
+    "dashboard": "Dashboard",
+    "shipments": "Shipments",
+    "tracking": "Tracking",
+    "analytics": "Analytics"
+  },
+  "actions": {
+    "new_shipment": "New Shipment",
+    "logout": "Logout",
+    "view": "View",
+    "export": "Export",
+    "filters": "Filters",
+    "track": "Track",
+    "get_started": "Get Started Free",
+    "more": "More"
+  },
+  "auth": {
+    "email": "Email address",
+    "password": "Password",
+    "remember": "Remember me",
+    "sign_in": "Sign in",
+    "forgot_password": "Forgot your password?",
+    "welcome_back": "Welcome Back",
+    "sign_in_sub": "Sign in to your account",
+    "complete_verification": "Please complete verification"
+  },
+  "topbar": {
+    "hours": "Mon-Fri: 8:00-18:00"
+  },
+  "track": {
+    "title": "Track Your Package",
+    "placeholder": "Enter tracking number"
+  },
+  "stats": {
+    "shipments_delivered": "Shipments Delivered",
+    "on_time_delivery": "On-Time Delivery",
+    "happy_customers": "Happy Customers",
+    "customer_support": "Customer Support"
+  },
+  "features": {
+    "express_shipping": "Express Shipping",
+    "express_shipping_desc": "Fast and reliable delivery services for urgent shipments",
+    "international_logistics": "International Logistics",
+    "international_logistics_desc": "Global shipping solutions with customs clearance support",
+    "secure_handling": "Secure Handling",
+    "secure_handling_desc": "Professional handling and insurance coverage for all shipments",
+    "real_time_tracking": "Real-time Tracking",
+    "real_time_tracking_desc": "Live package tracking with delivery timeline and notifications"
+  },
+  "homepage": {
+    "services_title": "Our Services",
+    "services_sub": "Comprehensive logistics solutions designed to meet your shipping needs",
+    "testimonials_title": "What Our Customers Say",
+    "testimonials_sub": "Join thousands of satisfied customers who trust WAHL for their logistics needs",
+    "cta_title": "Ready to Transform Your Logistics?",
+    "cta_sub": "Get started with WAHL today and experience the future of shipping management."
+  },
+  "homepage.testimonial1": "WAHL has transformed our logistics operations. The real-time tracking and automated workflows save us hours every day.",
+  "homepage.testimonial2": "Excellent international shipping services. The customs clearance support is invaluable for our business.",
+  "homepage.testimonial3": "The analytics dashboard provides insights that help us optimize our shipping costs and delivery times.",
+  "footer": {
+    "quick_links": "Quick Links",
+    "our_services": "Our Services",
+    "contact_info": "Contact Info",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookie": "Cookie Policy",
+    "copyright": "© 2024 WAHL Logistics Solutions. All rights reserved.",
+    "ground_transportation": "Ground Transportation",
+    "ocean_freight": "Ocean Freight",
+    "air_freight": "Air Freight",
+    "warehousing": "Warehousing",
+    "supply_chain": "Supply Chain Management"
+  },
+  "shipments": {
+    "status": "Status",
+    "all_statuses": "All Statuses",
+    "pending": "Pending",
+    "in_transit": "In Transit",
+    "delivered": "Delivered",
+    "created": "Created",
+    "estimated_delivery": "Estimated Delivery",
+    "actions": "Actions",
+    "no_shipments": "No shipments found",
+    "create_first": "Create Your First Shipment"
+  },
+  "analytics": {
+    "total_shipments": "Total Shipments",
+    "delivered": "Delivered",
+    "pending": "Pending",
+    "in_transit": "In Transit",
+    "success_rate": "Success Rate",
+    "daily_shipments": "Daily Shipments",
+    "export_data": "Export Data"
+  },
+  "tracking_page": {
+    "order_placed": "Order Placed",
+    "in_transit": "In Transit",
+    "delivered": "Delivered",
+    "title": "Track Your Shipment",
+    "subtitle": "Enter your tracking number to get real-time updates",
+    "shipment_found": "Shipment Found",
+    "from": "From",
+    "to": "To",
+    "estimated_delivery": "Estimated Delivery",
+    "weight": "Weight",
+    "carrier": "Carrier",
+    "tracking_history": "Tracking History",
+    "package_details": "Package Details",
+    "dimensions": "Dimensions",
+    "value": "Value",
+    "service": "Service",
+    "description": "Description",
+    "not_available": "Not available",
+    "errors": {
+      "not_found": "Shipment not found. Please check your tracking number.",
+      "generic": "An error occurred while tracking your shipment."
+    }
+  },
+  "language": {
+    "current": "Language",
+    "english": "English",
+    "arabic": "Arabic"
+  }
+}

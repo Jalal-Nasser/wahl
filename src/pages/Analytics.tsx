@@ -5,6 +5,7 @@ import { TrendingUp, Package, Clock, DollarSign, Download } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Shipment } from '../types/database';
+import { useTranslation } from 'react-i18next';
 
 ChartJS.register(
   CategoryScale,
@@ -26,7 +27,7 @@ const Analytics: React.FC = () => {
   const [dateRange, setDateRange] = useState('30');
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
 
-  
+  const { t, i18n } = useTranslation();
 
   const fetchShipments = useCallback(async () => {
     if (!user) return;
@@ -72,7 +73,8 @@ const Analytics: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -80,7 +82,8 @@ const Analytics: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'USD'
     }).format(amount);
@@ -257,7 +260,7 @@ const Analytics: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('nav.analytics')}</h1>
               <p className="text-gray-600 mt-1">Comprehensive insights into your shipping operations</p>
             </div>
             <div className="flex items-center gap-4">
@@ -276,7 +279,7 @@ const Analytics: React.FC = () => {
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />
-                Export Data
+                {t('analytics.export_data')}
               </button>
             </div>
           </div>
@@ -287,7 +290,7 @@ const Analytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Shipments</p>
+                <p className="text-sm text-gray-600">{t('analytics.total_shipments')}</p>
                 <p className="text-3xl font-bold text-gray-900">{totalShipments}</p>
                 <p className="text-sm text-green-600 mt-1">+{Math.round(Math.random() * 20)}% from last period</p>
               </div>
@@ -300,7 +303,7 @@ const Analytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Delivered</p>
+                <p className="text-sm text-gray-600">{t('analytics.delivered')}</p>
                 <p className="text-3xl font-bold text-gray-900">{deliveredShipments}</p>
                 <p className="text-sm text-green-600 mt-1">
                   {totalShipments > 0 ? Math.round((deliveredShipments / totalShipments) * 100) : 0}% success rate
@@ -344,7 +347,7 @@ const Analytics: React.FC = () => {
           {/* Daily Shipments Chart */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Daily Shipments</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('analytics.daily_shipments')}</h3>
               <div className="flex gap-2">
                 <button
                   onClick={() => setChartType('bar')}
@@ -412,7 +415,7 @@ const Analytics: React.FC = () => {
                       Tracking Number
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      {t('shipments.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Sender
@@ -424,10 +427,10 @@ const Analytics: React.FC = () => {
                       Carrier
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
+                      {t('shipments.created')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Value
+                      {t('tracking_page.value')}
                     </th>
                   </tr>
                 </thead>
@@ -436,7 +439,7 @@ const Analytics: React.FC = () => {
                     <tr key={shipment.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {shipment.tracking_number}
+                          <span className="rtl-ltr">{shipment.tracking_number}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -463,7 +466,7 @@ const Analytics: React.FC = () => {
                         {formatDate(shipment.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                        ${shipment.value}
+                        <span className="rtl-ltr">{formatCurrency(shipment.value || 0)}</span>
                       </td>
                     </tr>
                   ))}

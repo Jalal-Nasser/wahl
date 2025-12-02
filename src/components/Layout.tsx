@@ -3,12 +3,15 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { BarChart3, Truck, Search, User, LogOut, Menu, X, Plus } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default function Layout() {
   const { user, logout, checkAuth } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { t } = useTranslation()
 
   useEffect(() => {
     checkAuth()
@@ -28,10 +31,10 @@ export default function Layout() {
   }
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
-    { name: 'Shipments', href: '/shipments', icon: Truck },
-    { name: 'Tracking', href: '/tracking', icon: Search },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: t('nav.dashboard'), href: '/dashboard', icon: BarChart3 },
+    { name: t('nav.shipments'), href: '/shipments', icon: Truck },
+    { name: t('nav.tracking'), href: '/tracking', icon: Search },
+    { name: t('nav.analytics'), href: '/analytics', icon: BarChart3 },
   ]
 
   return (
@@ -47,7 +50,7 @@ export default function Layout() {
                   <div className="bg-white p-2 rounded-full shadow-sm">
                     <img src="/logo.png" alt="WAHL" className="h-8 w-8 object-contain" />
                   </div>
-                  <span className="ml-3 text-xl font-bold text-gray-900">WAHL</span>
+                  <span className="ml-3 text-xl font-bold text-gray-900">{t('brand')}</span>
                 </Link>
               </div>
 
@@ -82,7 +85,7 @@ export default function Layout() {
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                New Shipment
+                {t('actions.new_shipment')}
               </Link>
 
               {/* User menu */}
@@ -100,6 +103,8 @@ export default function Layout() {
                   </button>
                 </div>
               </div>
+
+              <LanguageSwitcher />
             </div>
 
             {/* Mobile menu button */}
@@ -148,14 +153,14 @@ export default function Layout() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Plus className="h-5 w-5 mr-3" />
-                New Shipment
+                {t('actions.new_shipment')}
               </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center w-full px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               >
                 <LogOut className="h-5 w-5 mr-3" />
-                Logout
+                {t('actions.logout')}
               </button>
             </div>
           </div>

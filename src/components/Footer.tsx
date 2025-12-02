@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { SiteSettings } from '@/types/database';
 import { getSiteSettings } from '@/lib/contentProvider';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
   const [settings, setSettings] = useState<SiteSettings | null>(null)
   useEffect(() => { (async () => { const s = await getSiteSettings(); setSettings(s) })() }, [])
+  const { t, i18n } = useTranslation()
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-16">
@@ -21,11 +23,10 @@ export default function Footer() {
                   <span className="absolute text-white font-extrabold text-base">W</span>
                 </div>
               </div>
-              <div className="text-sm font-bold text-white text-center">{settings?.footer_brand_text || 'WAHL Logistics وهل اللوجيستية'}</div>
+              <div className="text-sm font-bold text-white text-center">{settings?.footer_brand_text || t('brand')}</div>
             </div>
             <p className="text-gray-300 mb-6">
-              Your trusted partner for comprehensive logistics solutions. 
-              We deliver excellence with every shipment, ensuring your cargo reaches its destination safely and on time.
+              {t('homepage.cta_sub')}
             </p>
             <div className="flex space-x-4">
               {settings?.social_facebook && (<a href={settings.social_facebook} target="_blank" rel="noreferrer"><Facebook className="h-5 w-5 text-gray-400 hover:text-blue-400 cursor-pointer transition-colors duration-200" /></a>)}
@@ -38,32 +39,32 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="text-lg font-semibold mb-6 text-blue-400">
-              Quick Links
+              {t('footer.quick_links')}
             </h3>
             <ul className="space-y-3">
               <li>
                 <Link to="/" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  Home
+                  {t('nav.home')}
                 </Link>
               </li>
               <li>
                 <Link to="/services" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  Services
+                  {t('nav.services')}
                 </Link>
               </li>
               <li>
                 <Link to="/about" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  About Us
+                  {t('nav.about')}
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  Contact
+                  {t('nav.contact')}
                 </Link>
               </li>
               <li>
                 <Link to="/blog" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  Blog
+                  {t('nav.blog')}
                 </Link>
               </li>
             </ul>
@@ -72,32 +73,32 @@ export default function Footer() {
           {/* Services */}
           <div>
             <h3 className="text-lg font-semibold mb-6 text-blue-400">
-              Our Services
+              {t('footer.our_services')}
             </h3>
             <ul className="space-y-3">
               <li>
                 <span className="text-gray-300 hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                  Ground Transportation
+                  {t('footer.ground_transportation')}
                 </span>
               </li>
               <li>
                 <span className="text-gray-300 hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                  Ocean Freight
+                  {t('footer.ocean_freight')}
                 </span>
               </li>
               <li>
                 <span className="text-gray-300 hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                  Air Freight
+                  {t('footer.air_freight')}
                 </span>
               </li>
               <li>
                 <span className="text-gray-300 hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                  Warehousing
+                  {t('footer.warehousing')}
                 </span>
               </li>
               <li>
                 <span className="text-gray-300 hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                  Supply Chain Management
+                  {t('footer.supply_chain')}
                 </span>
               </li>
             </ul>
@@ -106,28 +107,28 @@ export default function Footer() {
           {/* Contact Info */}
           <div>
             <h3 className="text-lg font-semibold mb-6 text-blue-400">
-              Contact Info
+              {t('footer.contact_info')}
             </h3>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
                 <div>
-                  <div className="text-gray-300">Dammam</div>
-                  <div className="text-gray-300">Eastern Province</div>
-                  <div className="text-gray-300">Saudi Arabia</div>
+                  <div className="text-gray-300">{i18n.language.startsWith('ar') ? 'الدمام' : 'Dammam'}</div>
+                  <div className="text-gray-300">{i18n.language.startsWith('ar') ? 'المنطقة الشرقية' : 'Eastern Province'}</div>
+                  <div className="text-gray-300">{i18n.language.startsWith('ar') ? 'المملكة العربية السعودية' : 'Saudi Arabia'}</div>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-300">+966 12 345 6789</span>
+                <span className="text-gray-300 rtl-ltr">+966 12 345 6789</span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-300">info@wahl.sa</span>
+                <span className="text-gray-300 rtl-ltr">info@wahl.sa</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-300">Mon-Fri: 8:00-18:00</span>
+                <span className="text-gray-300">{i18n.language.startsWith('ar') ? 'الأحد - الخميس ٨:٠٠ ص إلى ٥:٠٠ م' : 'Sunday-Thursday 8:00 AM to 5:00 PM'}</span>
               </div>
             </div>
           </div>
@@ -136,18 +137,19 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 WAHL Logistics Solutions. All rights reserved.
+            <div className="text-gray-400 text-sm mb-4 md:mb-0 rtl-ltr">
+              © 2026 WAHL Logistics Solutions. All rights reserved. Designed by{' '}
+              <a href="https://github.com/Jalal-Nasser" target="_blank" rel="noreferrer" className="underline hover:text-blue-400">Jalal Nasser</a>
             </div>
-            <div className="flex space-x-6 text-sm text-gray-400">
+            <div className="flex gap-6 text-sm text-gray-400">
               <span className="hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                Privacy Policy
+                {t('footer.privacy')}
               </span>
               <span className="hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                Terms of Service
+                {t('footer.terms')}
               </span>
               <span className="hover:text-blue-400 cursor-pointer transition-colors duration-200">
-                Cookie Policy
+                {t('footer.cookie')}
               </span>
             </div>
           </div>

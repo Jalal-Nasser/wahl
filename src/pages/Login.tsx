@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ export default function Login() {
   
   const { login, isLoading, error } = useAuthStore()
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
@@ -44,7 +46,7 @@ export default function Login() {
     try {
       const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
       if (siteKey && !cfToken) {
-        setFormError('Please complete verification')
+        setFormError(t('auth.complete_verification'))
         return
       }
       setFormError(null)
@@ -61,14 +63,14 @@ export default function Login() {
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <img src="/logo.png" alt="WAHL" className="mx-auto h-28 w-auto drop-shadow-xl" />
-          <p className="mt-2 text-blue-100">Ship Smarter, Deliver Faster</p>
+          <p className="mt-2 text-blue-100">{t('slogan')}</p>
         </div>
 
         {/* Login Form */}
         <div className="bg-white rounded-lg shadow-xl p-8">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">Sign in to your account</p>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-2">{t('auth.welcome_back')}</h2>
+            <p className="text-gray-600">{t('auth.sign_in_sub')}</p>
           </div>
 
           {(error || formError) && (
@@ -80,7 +82,7 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
+                {t('auth.email')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,14 +95,14 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your email"
+                  placeholder={t('auth.email')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
+                {t('auth.password')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,7 +115,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your password"
+                  placeholder={t('auth.password')}
                 />
                 <button
                   type="button"
@@ -138,12 +140,12 @@ export default function Login() {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
+                  {t('auth.remember')}
                 </label>
               </div>
               <div className="text-sm">
                 <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                  Forgot password?
+                  {t('auth.forgot_password')}
                 </a>
               </div>
             </div>
@@ -155,7 +157,7 @@ export default function Login() {
               disabled={isLoading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('auth.sign_in') : t('auth.sign_in')}
             </button>
           </form>
 

@@ -1,0 +1,134 @@
+{
+  "brand": "وهل اللوجستية",
+  "slogan": "اشحن بذكاء، سلّم بسرعة",
+  "nav": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "services": "الخدمات",
+    "clients": "عملاؤنا",
+    "contact": "تواصل معنا",
+    "blog": "المدونة",
+    "dashboard": "لوحة التحكم",
+    "shipments": "الشحنات",
+    "tracking": "التتبع",
+    "analytics": "التحليلات"
+  },
+  "actions": {
+    "new_shipment": "شحنة جديدة",
+    "logout": "تسجيل الخروج",
+    "view": "عرض",
+    "export": "تصدير",
+    "filters": "تصفية",
+    "track": "تتبع",
+    "get_started": "ابدأ مجانًا",
+    "more": "المزيد"
+  },
+  "auth": {
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "remember": "تذكرني",
+    "sign_in": "تسجيل الدخول",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "welcome_back": "مرحبًا بعودتك",
+    "sign_in_sub": "سجّل الدخول إلى حسابك",
+    "complete_verification": "يرجى إتمام التحقق"
+  },
+  "topbar": {
+    "hours": "الاثنين-الجمعة: 8:00-18:00"
+  },
+  "track": {
+    "title": "تتبع شحنتك",
+    "placeholder": "أدخل رقم التتبع"
+  },
+  "stats": {
+    "shipments_delivered": "شحنات تم تسليمها",
+    "on_time_delivery": "تسليم في الوقت المحدد",
+    "happy_customers": "عملاء سعداء",
+    "customer_support": "دعم العملاء"
+  },
+  "features": {
+    "express_shipping": "الشحن السريع",
+    "express_shipping_desc": "تسليم سريع وموثوق للشحنات العاجلة",
+    "international_logistics": "اللوجستيات الدولية",
+    "international_logistics_desc": "حلول شحن عالمية مع دعم التخليص الجمركي",
+    "secure_handling": "مناولة آمنة",
+    "secure_handling_desc": "مناولة احترافية وتأمين لجميع الشحنات",
+    "real_time_tracking": "تتبع لحظي",
+    "real_time_tracking_desc": "تتبع مباشر للشحن مع مخطط زمني وإشعارات"
+  },
+  "homepage": {
+    "services_title": "خدماتنا",
+    "services_sub": "حلول لوجستية شاملة لتلبية احتياجات الشحن لديك",
+    "testimonials_title": "آراء عملائنا",
+    "testimonials_sub": "انضم إلى آلاف العملاء الذين يثقون بواهِل لاحتياجاتهم اللوجستية",
+    "cta_title": "هل أنت جاهز لتطوير أعمالك اللوجستية؟",
+    "cta_sub": "ابدأ اليوم مع واهِل واختبر مستقبل إدارة الشحن."
+  },
+  "homepage.testimonial1": "واهِل أحدثت تحولًا في عملياتنا اللوجستية. يوفّر التتبع اللحظي والأتمتة وفورات كبيرة في الوقت يوميًا.",
+  "homepage.testimonial2": "خدمات شحن دولية ممتازة. دعم التخليص الجمركي لا يُقدّر بثمن لأعمالنا.",
+  "homepage.testimonial3": "لوحة التحليلات تقدّم رؤى تساعدنا على تحسين تكاليف الشحن وأوقات التسليم.",
+  "footer": {
+    "quick_links": "روابط سريعة",
+    "our_services": "خدماتنا",
+    "contact_info": "معلومات التواصل",
+    "privacy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام",
+    "cookie": "سياسة ملفات تعريف الارتباط",
+    "copyright": "© 2024 واهِل لحلول الخدمات اللوجستية. جميع الحقوق محفوظة.",
+    "ground_transportation": "النقل البري",
+    "ocean_freight": "الشحن البحري",
+    "air_freight": "الشحن الجوي",
+    "warehousing": "التخزين",
+    "supply_chain": "إدارة سلسلة الإمداد"
+  },
+  "shipments": {
+    "status": "الحالة",
+    "all_statuses": "كل الحالات",
+    "pending": "قيد الانتظار",
+    "in_transit": "في الطريق",
+    "delivered": "تم التسليم",
+    "created": "تاريخ الإنشاء",
+    "estimated_delivery": "التسليم المتوقع",
+    "actions": "الإجراءات",
+    "no_shipments": "لا توجد شحنات",
+    "create_first": "أنشئ أول شحنة"
+  },
+  "analytics": {
+    "total_shipments": "إجمالي الشحنات",
+    "delivered": "تم التسليم",
+    "pending": "قيد الانتظار",
+    "in_transit": "في الطريق",
+    "success_rate": "نسبة النجاح",
+    "daily_shipments": "الشحنات اليومية",
+    "export_data": "تصدير البيانات"
+  },
+  "tracking_page": {
+    "order_placed": "تم طلب الشحنة",
+    "in_transit": "في الطريق",
+    "delivered": "تم التسليم",
+    "title": "تتبع شحنتك",
+    "subtitle": "أدخل رقم التتبع للحصول على تحديثات فورية",
+    "shipment_found": "تم العثور على الشحنة",
+    "from": "من",
+    "to": "إلى",
+    "estimated_delivery": "التسليم المتوقع",
+    "weight": "الوزن",
+    "carrier": "شركة الشحن",
+    "tracking_history": "سجل التتبع",
+    "package_details": "تفاصيل الطرد",
+    "dimensions": "الأبعاد",
+    "value": "القيمة",
+    "service": "الخدمة",
+    "description": "الوصف",
+    "not_available": "غير متوفر",
+    "errors": {
+      "not_found": "لم يتم العثور على الشحنة. يرجى التحقق من رقم التتبع.",
+      "generic": "حدث خطأ أثناء تتبع الشحنة."
+    }
+  },
+  "language": {
+    "current": "اللغة",
+    "english": "الإنجليزية",
+    "arabic": "العربية"
+  }
+}

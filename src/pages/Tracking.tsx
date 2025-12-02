@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, Package, Truck, Clock, CheckCircle, MapPin, Navigation } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Shipment, TrackingEvent } from '../types/database';
+import { useTranslation } from 'react-i18next';
 
 const Tracking: React.FC = () => {
   const [trackingNumber, setTrackingNumber] = useState('');
@@ -9,6 +10,7 @@ const Tracking: React.FC = () => {
   const [trackingEvents, setTrackingEvents] = useState<TrackingEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { t, i18n } = useTranslation();
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ const Tracking: React.FC = () => {
         .single();
 
       if (shipmentError || !shipmentData) {
-        setError('Shipment not found. Please check your tracking number.');
+        setError(t('tracking_page.errors.not_found'));
         setShipment(null);
         setTrackingEvents([]);
         return;
@@ -50,7 +52,7 @@ const Tracking: React.FC = () => {
       setTrackingEvents(eventsData || []);
     } catch (err) {
       console.error('Error tracking shipment:', err);
-      setError('An error occurred while tracking your shipment.');
+      setError(t('tracking_page.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -77,7 +79,8 @@ const Tracking: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -102,8 +105,8 @@ const Tracking: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Track Your Shipment</h1>
-          <p className="text-gray-600">Enter your tracking number to get real-time updates</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('tracking_page.title')}</h1>
+          <p className="text-gray-600">{t('tracking_page.subtitle')}</p>
         </div>
 
         {/* Tracking Form */}
@@ -113,7 +116,7 @@ const Tracking: React.FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Enter your tracking number (e.g., SHP12345678)"
+                placeholder={t('track.placeholder')}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
@@ -127,12 +130,12 @@ const Tracking: React.FC = () => {
               {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Tracking...
+                  {t('nav.tracking')}...
                 </>
               ) : (
                 <>
                   <Navigation className="w-5 h-5" />
-                  Track
+                  {t('nav.tracking')}
                 </>
               )}
             </button>
@@ -152,8 +155,8 @@ const Tracking: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Shipment Found</h2>
-                  <p className="text-gray-600 mt-1">Tracking Number: {shipment.tracking_number}</p>
+                  <h2 className="text-2xl font-bold text-gray-900">{t('tracking_page.shipment_found')}</h2>
+                  <p className="text-gray-600 mt-1">{t('nav.tracking')}: <span className="rtl-ltr">{shipment.tracking_number}</span></p>
                 </div>
                 <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(shipment.status)}`}>
                   {getStatusIcon(shipment.status)}
@@ -164,9 +167,9 @@ const Tracking: React.FC = () => {
               {/* Progress Bar */}
               <div className="mb-6">
                 <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>Order Placed</span>
-                  <span>In Transit</span>
-                  <span>Delivered</span>
+                  <span>{t('tracking_page.order_placed')}</span>
+                  <span>{t('tracking_page.in_transit')}</span>
+                  <span>{t('tracking_page.delivered')}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
@@ -180,7 +183,7 @@ const Tracking: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    From
+                    {t('tracking_page.from')}
                   </h3>
                   <p className="text-sm text-gray-900">{shipment.sender_address?.name}</p>
                   <p className="text-sm text-gray-600">{shipment.sender_address?.street}</p>
@@ -191,7 +194,7 @@ const Tracking: React.FC = () => {
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    To
+                    {t('tracking_page.to')}
                   </h3>
                   <p className="text-sm text-gray-900">{shipment.recipient_address?.name}</p>
                   <p className="text-sm text-gray-600">{shipment.recipient_address?.street}</p>
@@ -203,20 +206,20 @@ const Tracking: React.FC = () => {
 
               <div className="mt-6 pt-6 border-t border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Estimated Delivery</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.estimated_delivery')}</p>
                   <p className="font-medium">
                     {shipment.estimated_delivery 
                       ? formatDate(shipment.estimated_delivery)
-                      : 'Not available'
+                      : t('tracking_page.not_available')
                     }
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Weight</p>
-                  <p className="font-medium">{shipment.weight} lbs</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.weight')}</p>
+                  <p className="font-medium rtl-ltr">{shipment.weight} lbs</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Carrier</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.carrier')}</p>
                   <p className="font-medium">{shipment.carrier?.name}</p>
                 </div>
               </div>
@@ -227,7 +230,7 @@ const Tracking: React.FC = () => {
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                   <Truck className="w-5 h-5" />
-                  Tracking History
+                  {t('tracking_page.tracking_history')}
                 </h3>
                 
                 <div className="space-y-4">
@@ -270,31 +273,31 @@ const Tracking: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Package className="w-5 h-5" />
-                Package Details
+                {t('tracking_page.package_details')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Weight</p>
-                  <p className="font-medium">{shipment.weight} lbs</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.weight')}</p>
+                  <p className="font-medium rtl-ltr">{shipment.weight} lbs</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Dimensions</p>
-                  <p className="font-medium">
+                  <p className="text-sm text-gray-600">{t('tracking_page.dimensions')}</p>
+                  <p className="font-medium rtl-ltr">
                     {shipment.length}" × {shipment.width}" × {shipment.height}"
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Value</p>
-                  <p className="font-medium">${shipment.value}</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.value')}</p>
+                  <p className="font-medium rtl-ltr">${shipment.value}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Service</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.service')}</p>
                   <p className="font-medium capitalize">{shipment.service_type.replace('_', ' ')}</p>
                 </div>
               </div>
               {shipment.description && (
                 <div className="mt-4">
-                  <p className="text-sm text-gray-600">Description</p>
+                  <p className="text-sm text-gray-600">{t('tracking_page.description')}</p>
                   <p className="font-medium">{shipment.description}</p>
                 </div>
               )}

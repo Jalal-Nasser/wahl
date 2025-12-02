@@ -4,6 +4,7 @@ import { Search, Filter, Plus, Package, Truck, Clock, CheckCircle, XCircle, Eye,
 import { api } from '@/lib/api';
 import { useAuthStore } from '../stores/authStore';
 import { Shipment } from '../types/database';
+import { useTranslation } from 'react-i18next';
 
 const Shipments: React.FC = () => {
   const { user } = useAuthStore();
@@ -13,6 +14,7 @@ const Shipments: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const { t, i18n } = useTranslation();
 
   
 
@@ -89,7 +91,8 @@ const Shipments: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
@@ -125,15 +128,15 @@ const Shipments: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Shipments</h1>
-              <p className="text-gray-600 mt-1">Manage and track all your shipments in one place</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t('nav.shipments')}</h1>
+              <p className="text-gray-600 mt-1">{t('nav.tracking')}</p>
             </div>
             <Link
               to="/shipments/create"
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
-              Create Shipment
+              {t('actions.new_shipment')}
             </Link>
           </div>
 
@@ -144,7 +147,7 @@ const Shipments: React.FC = () => {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
-                  placeholder="Search by tracking number, sender, recipient, or carrier..."
+                  placeholder={t('track.placeholder')}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -155,14 +158,14 @@ const Shipments: React.FC = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
               >
                 <Filter className="w-5 h-5" />
-                Filters
+                {t('actions.filters')}
               </button>
               <button
                 onClick={exportToCSV}
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
               >
                 <Download className="w-5 h-5" />
-                Export
+                {t('actions.export')}
               </button>
             </div>
 
@@ -170,16 +173,16 @@ const Shipments: React.FC = () => {
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('shipments.status')}</label>
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="all">All Statuses</option>
-                      <option value="pending">Pending</option>
-                      <option value="in_transit">In Transit</option>
-                      <option value="delivered">Delivered</option>
+                      <option value="all">{t('shipments.all_statuses')}</option>
+                      <option value="pending">{t('shipments.pending')}</option>
+                      <option value="in_transit">{t('shipments.in_transit')}</option>
+                      <option value="delivered">{t('shipments.delivered')}</option>
                       <option value="cancelled">Cancelled</option>
                     </select>
                   </div>
@@ -206,7 +209,7 @@ const Shipments: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Shipments</p>
+                  <p className="text-sm text-gray-600">{t('analytics.total_shipments')}</p>
                   <p className="text-2xl font-bold text-gray-900">{filteredShipments.length}</p>
                 </div>
                 <Package className="w-8 h-8 text-blue-600" />
@@ -215,7 +218,7 @@ const Shipments: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">In Transit</p>
+                  <p className="text-sm text-gray-600">{t('analytics.in_transit')}</p>
                   <p className="text-2xl font-bold text-blue-600">
                     {filteredShipments.filter(s => s.status === 'in_transit').length}
                   </p>
@@ -226,7 +229,7 @@ const Shipments: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Delivered</p>
+                  <p className="text-sm text-gray-600">{t('analytics.delivered')}</p>
                   <p className="text-2xl font-bold text-green-600">
                     {filteredShipments.filter(s => s.status === 'delivered').length}
                   </p>
@@ -237,7 +240,7 @@ const Shipments: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Pending</p>
+                  <p className="text-sm text-gray-600">{t('shipments.pending')}</p>
                   <p className="text-2xl font-bold text-yellow-600">
                     {filteredShipments.filter(s => s.status === 'pending').length}
                   </p>
@@ -259,12 +262,12 @@ const Shipments: React.FC = () => {
             <div className="p-8 text-center">
               <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm || statusFilter !== 'all' || dateFilter !== 'all' ? 'No shipments found' : 'No shipments yet'}
+                {searchTerm || statusFilter !== 'all' || dateFilter !== 'all' ? t('shipments.no_shipments') : 'No shipments yet'}
               </h3>
               <p className="text-gray-600 mb-4">
                 {searchTerm || statusFilter !== 'all' || dateFilter !== 'all'
                   ? 'Try adjusting your search or filter criteria'
-                  : 'Create your first shipment to get started'}
+                  : t('shipments.create_first')}
               </p>
               {!searchTerm && statusFilter === 'all' && dateFilter === 'all' && (
                 <Link
@@ -272,7 +275,7 @@ const Shipments: React.FC = () => {
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
                 >
                   <Plus className="w-5 h-5" />
-                  Create Shipment
+                  {t('actions.new_shipment')}
                 </Link>
               )}
             </div>
@@ -285,7 +288,7 @@ const Shipments: React.FC = () => {
                       Tracking Number
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      {t('shipments.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Sender
@@ -297,13 +300,13 @@ const Shipments: React.FC = () => {
                       Carrier
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Created
+                      {t('shipments.created')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Estimated Delivery
+                      {t('shipments.estimated_delivery')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
+                      {t('shipments.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -360,7 +363,7 @@ const Shipments: React.FC = () => {
                             to={`/tracking/${shipment.tracking_number}`}
                             className="text-green-600 hover:text-green-800 text-sm font-medium"
                           >
-                            Track
+                            {t('nav.tracking')}
                           </Link>
                         </div>
                       </td>

@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { Shipment, AnalyticsData } from '@/types/database'
 import { Package, Truck, Clock, DollarSign, TrendingUp, Plus, Eye, LucideIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function Dashboard() {
   const { user } = useAuthStore()
@@ -12,7 +13,7 @@ export default function Dashboard() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  
+  const { t } = useTranslation()
 
   const loadDashboardData = useCallback(async () => {
     try {
@@ -161,18 +162,18 @@ export default function Dashboard() {
       {analytics && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
-            title="Total Shipments"
+            title={t('analytics.total_shipments')}
             value={analytics.total_shipments}
             icon={Package}
           />
           <StatCard
-            title="Delivered"
+            title={t('analytics.delivered')}
             value={analytics.delivered_shipments}
             icon={Truck}
             trend={analytics.success_rate}
           />
           <StatCard
-            title="In Transit"
+            title={t('analytics.in_transit')}
             value={analytics.in_transit_shipments}
             icon={Clock}
           />
@@ -188,12 +189,12 @@ export default function Dashboard() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Shipments</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('nav.shipments')}</h2>
             <Link
               to="/shipments"
               className="text-blue-600 hover:text-blue-700 text-sm font-medium"
             >
-              View All
+              {t('actions.view')}
             </Link>
           </div>
         </div>
@@ -232,7 +233,7 @@ export default function Dashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {shipment.service_type}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 rtl-ltr">
                     ${shipment.cost?.toFixed(2) || '0.00'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -241,7 +242,7 @@ export default function Dashboard() {
                       className="text-blue-600 hover:text-blue-700 flex items-center"
                     >
                       <Eye className="h-4 w-4 mr-1" />
-                      View
+                      {t('actions.view')}
                     </Link>
                   </td>
                 </tr>
@@ -251,13 +252,13 @@ export default function Dashboard() {
           {shipments.length === 0 && (
             <div className="text-center py-8">
               <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No shipments found</p>
+              <p className="text-gray-500">{t('shipments.no_shipments')}</p>
               <Link
                 to="/shipments/create"
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Create Your First Shipment
+                {t('shipments.create_first')}
               </Link>
             </div>
           )}
