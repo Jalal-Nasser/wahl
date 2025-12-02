@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { HeroSlide } from '@/types/database'
 import { getHeroSlides } from '@/lib/contentProvider'
 import { useTranslation } from 'react-i18next'
@@ -8,7 +7,6 @@ export default function HeroSlider() {
   const [index, setIndex] = useState(0)
   const [slides, setSlides] = useState<string[]>([])
   const { t } = useTranslation()
-  const isRTL = document.documentElement.getAttribute('dir') === 'rtl'
 
   useEffect(() => {
     const loadSlides = async () => {
@@ -34,8 +32,7 @@ export default function HeroSlider() {
     return () => clearInterval(id)
   }, [slides])
 
-  const prev = () => setIndex((index - 1 + slides.length) % slides.length)
-  const next = () => setIndex((index + 1) % slides.length)
+  
 
   return (
     <section className="relative overflow-hidden">
@@ -61,12 +58,7 @@ export default function HeroSlider() {
           </div>
         </div>
 
-        <button onClick={prev} aria-label="Previous slide" className={`absolute ${isRTL ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full`}>
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <button onClick={next} aria-label="Next slide" className={`absolute ${isRTL ? 'left-4' : 'right-4'} top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full`}>
-          <ArrowRight className="w-5 h-5" />
-        </button>
+        
 
         <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
           {slides.map((_, i) => (
