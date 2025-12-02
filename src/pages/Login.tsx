@@ -11,7 +11,7 @@ export default function Login() {
   const [cfToken, setCfToken] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
   
-  const { login, isLoading, error } = useAuthStore()
+  const { login, isLoading, error, errorCode } = useAuthStore()
   const navigate = useNavigate()
   const { t } = useTranslation()
 
@@ -74,7 +74,7 @@ export default function Login() {
           </div>
 
           {(error || formError) && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md" role="alert" aria-live="assertive">
               <p className="text-red-600 text-sm">{formError || error}</p>
             </div>
           )}
@@ -94,7 +94,8 @@ export default function Login() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'ACCOUNT_NOT_FOUND' ? 'border-red-500' : 'border-gray-300'}`}
+                  aria-invalid={errorCode === 'ACCOUNT_NOT_FOUND' ? true : undefined}
                   placeholder={t('auth.email')}
                 />
               </div>
@@ -114,7 +115,8 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className={`block w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'INCORRECT_PASSWORD' ? 'border-red-500' : 'border-gray-300'}`}
+                  aria-invalid={errorCode === 'INCORRECT_PASSWORD' ? true : undefined}
                   placeholder={t('auth.password')}
                 />
                 <button
@@ -144,7 +146,7 @@ export default function Login() {
                 </label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <a href="#" className="font-medium text-blue-600 hover:text-blue-500 underline">
                   {t('auth.forgot_password')}
                 </a>
               </div>

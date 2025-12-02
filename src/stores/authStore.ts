@@ -6,6 +6,7 @@ interface AuthState {
   user: User | null
   isLoading: boolean
   error: string | null
+  errorCode?: string | null
   
   login: (email: string, password: string, cfToken?: string) => Promise<void>
   register: (email: string, password: string, fullName: string) => Promise<void>
@@ -17,18 +18,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isLoading: false,
   error: null,
+  errorCode: null,
 
   login: async (email: string, password: string, cfToken?: string) => {
-    set({ isLoading: true, error: null })
+    set({ isLoading: true, error: null, errorCode: null })
     try {
       const resp = await api.auth.login(email, password, cfToken)
       if (resp?.user) {
-        set({ user: resp.user, isLoading: false })
+        set({ user: resp.user, isLoading: false, error: null, errorCode: null })
       } else {
         set({ isLoading: false })
       }
     } catch (error) {
-      set({ error: (error as Error).message, isLoading: false })
+      set({ error: (error as Error).message, errorCode: (error as (Error & { code?: string }))?.code || null, isLoading: false })
       throw error
     }
   },
@@ -51,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     set({ isLoading: true })
     api.auth.logout()
-    set({ user: null, isLoading: false })
+    set({ user: null, isLoading: false, error: null, errorCode: null })
   },
 
   checkAuth: async () => {

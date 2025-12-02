@@ -15,8 +15,16 @@ async function request(path: string, options: RequestInit = {}, auth = false) {
   }
   if (auth) headers['Authorization'] = `Bearer ${getToken()}`
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
-  if (!res.ok) throw new Error(await res.text())
   const ct = res.headers.get('content-type') || ''
+  if (!res.ok) {
+    if (ct.includes('application/json')) {
+      const data = await res.json()
+      const err = new Error(typeof data?.error === 'string' ? data.error : 'Request failed') as Error & { code?: string }
+      if (data?.code) err.code = data.code
+      throw err
+    }
+    throw new Error(await res.text())
+  }
   return ct.includes('application/json') ? res.json() : res.text()
 }
 

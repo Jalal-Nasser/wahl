@@ -14,6 +14,25 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Login attempt tracking (rate limiting)
+const loginAttempts = new Map()
+const ATTEMPT_WINDOW_MS = 15 * 60 * 1000
+const MAX_ATTEMPTS = 5
+function makeKey(email, ip) { return `${(email || '').toLowerCase()}|${ip}` }
+function getAttempts(email, ip) {
+  const key = makeKey(email, ip)
+  const now = Date.now()
+  const arr = (loginAttempts.get(key) || []).filter(ts => now - ts < ATTEMPT_WINDOW_MS)
+  loginAttempts.set(key, arr)
+  return arr
+}
+function recordAttempt(email, ip) {
+  const key = makeKey(email, ip)
+  const arr = getAttempts(email, ip)
+  arr.push(Date.now())
+  loginAttempts.set(key, arr)
+}
+
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST,
   port: Number(process.env.MYSQL_PORT || 3306),
@@ -246,6 +265,7 @@ app.post('/api/auth/register', authMiddleware, async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password, cf_token } = req.body
+    if (!email || !password) return res.status(400).json({ error: 'Missing email or password', code: 'MISSING_FIELDS' })
     const secret = process.env.TURNSTILE_SECRET_KEY || ''
     if (secret) {
       if (!cf_token) return res.status(400).json({ error: 'Verification required' })
@@ -262,11 +282,28 @@ app.post('/api/auth/login', async (req, res) => {
         return res.status(400).json({ error: 'Verification error' })
       }
     }
+    const attempts = getAttempts(email, req.ip)
+    const tooMany = attempts.length >= MAX_ATTEMPTS
+    if (tooMany) {
+      const first = attempts[0] || Date.now()
+      const retryAfter = Math.max(0, Math.ceil((ATTEMPT_WINDOW_MS - (Date.now() - first)) / 1000))
+      console.log(`[auth] lockout active email=${email} ip=${req.ip} retryAfter=${retryAfter}s`)
+      return res.status(429).json({ error: 'Login failed. Please try again later.', code: 'LOCKED', retryAfterSeconds: retryAfter })
+    }
     const rows = await query('SELECT * FROM wahl_users WHERE email=?', [email])
-    if (!rows.length) return res.status(401).json({ error: 'Invalid credentials' })
+    if (!rows.length) {
+      recordAttempt(email, req.ip)
+      console.log(`[auth] failed login: account_not_found email=${email} ip=${req.ip}`)
+      return res.status(401).json({ error: "This account does not exist. Please check your credentials or contact support", code: 'ACCOUNT_NOT_FOUND' })
+    }
     const user = rows[0]
     const ok = await bcrypt.compare(password, user.password_hash)
-    if (!ok) return res.status(401).json({ error: 'Invalid credentials' })
+    if (!ok) {
+      recordAttempt(email, req.ip)
+      console.log(`[auth] failed login: incorrect_password email=${email} ip=${req.ip}`)
+      return res.status(401).json({ error: "The password you entered is incorrect. Please try again or click 'Forgot Password'", code: 'INCORRECT_PASSWORD' })
+    }
+    loginAttempts.delete(makeKey(email, req.ip))
     const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
     res.json({ token, user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role } })
   } catch (e) {
