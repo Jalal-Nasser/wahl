@@ -39,6 +39,15 @@ export const api = {
       return request('/admin/invite', { method: 'POST', headers, body: JSON.stringify({ email, full_name, role }) })
     }
   },
+  profiles: {
+    async provision(email: string, full_name: string, role: string) {
+      const { data } = await supabase.auth.getSession()
+      const access = data.session?.access_token || ''
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (access) headers['Authorization'] = `Bearer ${access}`
+      return request('/auth/provision-profile', { method: 'POST', headers, body: JSON.stringify({ email, full_name, role }) })
+    }
+  },
   auth: {
     async register(email: string, password: string, full_name: string) {
       const data = await request('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, full_name }) })

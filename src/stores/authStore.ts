@@ -35,9 +35,18 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (!profile.data) {
         const defaultRole = email.toLowerCase() === 'admin@wahl.sa' ? 'admin' : 'shipper'
         const defaultName = authUser.user_metadata?.full_name || email.split('@')[0]
-        const { error: insErr } = await supabase.from('users').insert({ id: authUser.id, email, full_name: defaultName, role: defaultRole })
-        if (!insErr) {
-          profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+        try {
+          const created = await api.profiles.provision(email, defaultName, defaultRole)
+          if (created && typeof created === 'object') {
+            profile = { data: created } as { data: User | null }
+          }
+        } catch {
+          /* noop */
+        }
+        if (!profile.data) {
+          const fallback = { id: authUser.id, email, full_name: defaultName, role: defaultRole } as unknown as User
+          set({ user: fallback, isLoading: false, error: null, errorCode: null })
+          return
         }
       }
       const u = profile.data as unknown as User | null
@@ -81,9 +90,18 @@ export const useAuthStore = create<AuthState>((set) => ({
         const email = authUser.email || ''
         const defaultRole = email.toLowerCase() === 'admin@wahl.sa' ? 'admin' : 'shipper'
         const defaultName = authUser.user_metadata?.full_name || email.split('@')[0]
-        const { error: insErr } = await supabase.from('users').insert({ id: authUser.id, email, full_name: defaultName, role: defaultRole })
-        if (!insErr) {
-          profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+        try {
+          const created = await api.profiles.provision(email, defaultName, defaultRole)
+          if (created && typeof created === 'object') {
+            profile = { data: created } as { data: User | null }
+          }
+        } catch {
+          /* noop */
+        }
+        if (!profile.data) {
+          const fallback = { id: authUser.id, email, full_name: defaultName, role: defaultRole } as unknown as User
+          set({ user: fallback, isLoading: false })
+          return
         }
       }
       const u = profile.data as unknown as User | null
