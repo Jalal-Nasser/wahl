@@ -36,7 +36,7 @@ export default function HeroSlider() {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="relative h-[520px] md:h-[680px] rounded-2xl">
+      <div className="relative h-[320px] sm:h-[460px] md:h-[680px] rounded-2xl">
         {slides.map((src, i) => (
           <div
             key={i}
@@ -49,10 +49,10 @@ export default function HeroSlider() {
         <div className="absolute inset-0 z-10 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl text-white">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">{t('homepage.services_title')}</h1>
-              <p className="text-lg md:text-xl text-white/85 mb-8">{t('homepage.services_sub')}</p>
-              <div className="flex gap-4">
-                <a href="/services" className="bg-white text-gray-900 px-6 py-3 rounded-lg font-semibold">{t('actions.more')}</a>
+              <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-4 sm:mb-6">{t('homepage.services_title')}</h1>
+              <p className="text-base sm:text-lg md:text-xl text-white/85 mb-6 sm:mb-8">{t('homepage.services_sub')}</p>
+              <div className="flex gap-3 sm:gap-4">
+                <a href="/services" className="bg-white text-gray-900 px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold">{t('actions.more')}</a>
               </div>
             </div>
           </div>
@@ -60,11 +60,7 @@ export default function HeroSlider() {
 
         
 
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 z-10 flex flex-col gap-2">
-          {slides.map((_, i) => (
-            <div key={i} className={`w-3 h-3 rounded-full border-2 ${i === index ? 'bg-white border-white' : 'border-white/80'}`} />)
-          )}
-        </div>
+        
       </div>
     </section>
   )
