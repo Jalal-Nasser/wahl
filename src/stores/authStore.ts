@@ -24,18 +24,22 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     set({ isLoading: true, error: null, errorCode: null })
     try {
-      const exists = await supabase.from('users').select('id').eq('email', email).maybeSingle()
-      if (!exists.data) {
-        set({ isLoading: false, error: "This account does not exist. Please check your credentials or contact support", errorCode: 'ACCOUNT_NOT_FOUND' })
-        throw new Error('ACCOUNT_NOT_FOUND')
-      }
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
       if (signInError) {
         set({ isLoading: false, error: "The password you entered is incorrect. Please try again or click 'Forgot Password'", errorCode: 'INCORRECT_PASSWORD' })
         throw new Error('INCORRECT_PASSWORD')
       }
-      const userId = signInData.user?.id || exists.data.id
-      const profile = await supabase.from('users').select('*').eq('id', userId).maybeSingle()
+      const authUser = signInData.user
+      if (!authUser) { set({ isLoading: false, error: 'Login failed', errorCode: 'GENERIC_AUTH_FAILURE' }); return }
+      let profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+      if (!profile.data) {
+        const defaultRole = email.toLowerCase() === 'admin@wahl.sa' ? 'admin' : 'shipper'
+        const defaultName = authUser.user_metadata?.full_name || email.split('@')[0]
+        const { error: insErr } = await supabase.from('users').insert({ id: authUser.id, email, full_name: defaultName, role: defaultRole })
+        if (!insErr) {
+          profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+        }
+      }
       const u = profile.data as unknown as User | null
       set({ user: u, isLoading: false, error: null, errorCode: null })
     } catch (error) {
@@ -72,7 +76,16 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data } = await supabase.auth.getUser()
       const authUser = data.user
       if (!authUser) { set({ user: null, isLoading: false }); return }
-      const profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+      let profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+      if (!profile.data) {
+        const email = authUser.email || ''
+        const defaultRole = email.toLowerCase() === 'admin@wahl.sa' ? 'admin' : 'shipper'
+        const defaultName = authUser.user_metadata?.full_name || email.split('@')[0]
+        const { error: insErr } = await supabase.from('users').insert({ id: authUser.id, email, full_name: defaultName, role: defaultRole })
+        if (!insErr) {
+          profile = await supabase.from('users').select('*').eq('id', authUser.id).maybeSingle()
+        }
+      }
       const u = profile.data as unknown as User | null
       set({ user: u, isLoading: false })
     } catch {
