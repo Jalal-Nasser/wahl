@@ -119,10 +119,10 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.full_name}!
+          {t('dashboard.welcome', { name: user?.full_name || 'admin' })}
         </h1>
         <p className="text-gray-600 mt-1">
-          Here's what's happening with your shipments today.
+          {t('dashboard.subtext')}
         </p>
       </div>
 
@@ -130,31 +130,31 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Link
           to="/shipments/create"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
         >
           <Plus className="h-5 w-5" />
-          <span>Create Shipment</span>
+          <span>{t('actions.create_shipment')}</span>
         </Link>
         <Link
           to="/shipments"
-          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center space-x-2 border border-gray-200 transition-colors"
+          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center gap-2 border border-gray-200 transition-colors"
         >
           <Package className="h-5 w-5" />
-          <span>View Shipments</span>
+          <span>{t('actions.view_shipments')}</span>
         </Link>
         <Link
           to="/tracking"
-          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center space-x-2 border border-gray-200 transition-colors"
+          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center gap-2 border border-gray-200 transition-colors"
         >
           <Truck className="h-5 w-5" />
-          <span>Track Package</span>
+          <span>{t('actions.track_package')}</span>
         </Link>
         <Link
           to="/analytics"
-          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center space-x-2 border border-gray-200 transition-colors"
+          className="bg-white hover:bg-gray-50 text-gray-700 p-4 rounded-lg flex items-center justify-center gap-2 border border-gray-200 transition-colors"
         >
           <TrendingUp className="h-5 w-5" />
-          <span>View Reports</span>
+          <span>{t('actions.view_reports')}</span>
         </Link>
       </div>
 
@@ -178,7 +178,7 @@ export default function Dashboard() {
             icon={Clock}
           />
           <StatCard
-            title="Revenue"
+            title={t('analytics.revenue')}
             value={`$${analytics.total_revenue.toFixed(2)}`}
             icon={DollarSign}
           />
@@ -203,19 +203,19 @@ export default function Dashboard() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tracking Number
+                  {t('shipments.tracking_number')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {t('shipments.status')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service
+                  {t('shipments.service')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cost
+                  {t('shipments.cost')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {t('shipments.actions')}
                 </th>
               </tr>
             </thead>
@@ -239,9 +239,9 @@ export default function Dashboard() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <Link
                       to={`/shipments/${shipment.id}`}
-                      className="text-blue-600 hover:text-blue-700 flex items-center"
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
                     >
-                      <Eye className="h-4 w-4 mr-1" />
+                      <Eye className="h-4 w-4" />
                       {t('actions.view')}
                     </Link>
                   </td>
@@ -255,9 +255,9 @@ export default function Dashboard() {
               <p className="text-gray-500">{t('shipments.no_shipments')}</p>
               <Link
                 to="/shipments/create"
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4" />
                 {t('shipments.create_first')}
               </Link>
             </div>

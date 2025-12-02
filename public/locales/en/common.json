@@ -21,7 +21,11 @@
     "filters": "Filters",
     "track": "Track",
     "get_started": "Get Started Free",
-    "more": "More"
+    "more": "More",
+    "create_shipment": "Create Shipment",
+    "view_shipments": "View Shipments",
+    "track_package": "Track Package",
+    "view_reports": "View Reports"
   },
   "auth": {
     "email": "Email address",
@@ -91,7 +95,10 @@
     "estimated_delivery": "Estimated Delivery",
     "actions": "Actions",
     "no_shipments": "No shipments found",
-    "create_first": "Create Your First Shipment"
+    "create_first": "Create Your First Shipment",
+    "tracking_number": "Tracking Number",
+    "service": "Service",
+    "cost": "Cost"
   },
   "analytics": {
     "total_shipments": "Total Shipments",
@@ -100,7 +107,8 @@
     "in_transit": "In Transit",
     "success_rate": "Success Rate",
     "daily_shipments": "Daily Shipments",
-    "export_data": "Export Data"
+    "export_data": "Export Data",
+    "revenue": "Revenue"
   },
   "tracking_page": {
     "order_placed": "Order Placed",
@@ -130,5 +138,9 @@
     "current": "Language",
     "english": "English",
     "arabic": "Arabic"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}!",
+    "subtext": "Here's what's happening with your shipments today."
   }
 }

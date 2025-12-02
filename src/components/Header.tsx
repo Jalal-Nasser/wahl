@@ -75,9 +75,9 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center gap-3">
             <img src={settings?.logo_url || '/logo.png'} alt={t('brand')} className="h-10 w-auto" />
-            <span className="ml-3 font-bold text-[#1e3a8a] text-[17px] tracking-[0.2px]">{settings?.header_brand_text || t('brand')}</span>
+            <span className="font-bold text-[#1e3a8a] text-[17px] tracking-[0.2px]">{settings?.header_brand_text || t('brand')}</span>
           </Link>
 
           {/* Desktop Navigation */}

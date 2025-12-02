@@ -21,7 +21,11 @@
     "filters": "تصفية",
     "track": "تتبع",
     "get_started": "ابدأ مجانًا",
-    "more": "المزيد"
+    "more": "المزيد",
+    "create_shipment": "إنشاء شحنة",
+    "view_shipments": "عرض الشحنات",
+    "track_package": "تتبع الشحنة",
+    "view_reports": "عرض التقارير"
   },
   "auth": {
     "email": "البريد الإلكتروني",
@@ -91,7 +95,10 @@
     "estimated_delivery": "التسليم المتوقع",
     "actions": "الإجراءات",
     "no_shipments": "لا توجد شحنات",
-    "create_first": "أنشئ أول شحنة"
+    "create_first": "أنشئ أول شحنة",
+    "tracking_number": "رقم التتبع",
+    "service": "الخدمة",
+    "cost": "التكلفة"
   },
   "analytics": {
     "total_shipments": "إجمالي الشحنات",
@@ -100,7 +107,8 @@
     "in_transit": "في الطريق",
     "success_rate": "نسبة النجاح",
     "daily_shipments": "الشحنات اليومية",
-    "export_data": "تصدير البيانات"
+    "export_data": "تصدير البيانات",
+    "revenue": "الإيرادات"
   },
   "tracking_page": {
     "order_placed": "تم طلب الشحنة",
@@ -130,5 +138,9 @@
     "current": "اللغة",
     "english": "الإنجليزية",
     "arabic": "العربية"
+  },
+  "dashboard": {
+    "welcome": "مرحبًا بعودتك، {{name}}!",
+    "subtext": "إليك ملخص ما يحدث لشحناتك اليوم."
   }
 }

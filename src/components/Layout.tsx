@@ -46,16 +46,16 @@ export default function Layout() {
             <div className="flex">
               {/* Logo */}
               <div className="flex-shrink-0 flex items-center">
-                <Link to="/dashboard" className="flex items-center">
+                <Link to="/dashboard" className="flex items-center gap-3">
                   <div className="bg-white p-2 rounded-full shadow-sm">
                     <img src="/logo.png" alt="WAHL" className="h-8 w-8 object-contain" />
                   </div>
-                  <span className="ml-3 text-xl font-bold text-gray-900">{t('brand')}</span>
+                  <span className="text-xl font-bold text-gray-900">{t('brand')}</span>
                 </Link>
               </div>
 
               {/* Desktop Navigation */}
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <div className="hidden sm:flex sm:gap-8 sm:mx-6">
                 {navigation.map((item) => {
                   const Icon = item.icon
                   return (
@@ -63,14 +63,14 @@ export default function Layout() {
                       key={item.name}
                       to={item.href}
                       className={`
-                        inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium
+                        inline-flex items-center gap-2 px-1 pt-1 border-b-2 text-sm font-medium
                         ${isActive(item.href)
                           ? 'border-blue-500 text-gray-900'
                           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
                         }
                       `}
                     >
-                      <Icon className="h-4 w-4 mr-2" />
+                      <Icon className="h-4 w-4" />
                       {item.name}
                     </Link>
                   )
@@ -79,18 +79,18 @@ export default function Layout() {
             </div>
 
             {/* Right side */}
-            <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+            <div className="hidden sm:flex sm:items-center sm:gap-4 sm:mx-6">
               <Link
                 to="/shipments/create"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4" />
                 {t('actions.new_shipment')}
               </Link>
 
               {/* User menu */}
               <div className="relative">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <div className="bg-gray-200 p-2 rounded-full">
                     <User className="h-4 w-4 text-gray-600" />
                   </div>
@@ -134,7 +134,7 @@ export default function Layout() {
                     key={item.name}
                     to={item.href}
                     className={`
-                      flex items-center px-4 py-2 text-base font-medium
+                      flex items-center gap-3 px-4 py-2 text-base font-medium
                       ${isActive(item.href)
                         ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-700'
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -142,24 +142,24 @@ export default function Layout() {
                     `}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <Icon className="h-5 w-5 mr-3" />
+                    <Icon className="h-5 w-5" />
                     {item.name}
                   </Link>
                 )
               })}
               <Link
                 to="/shipments/create"
-                className="flex items-center px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                className="flex items-center gap-3 px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Plus className="h-5 w-5 mr-3" />
+                <Plus className="h-5 w-5" />
                 {t('actions.new_shipment')}
               </Link>
               <button
                 onClick={handleLogout}
-                className="flex items-center w-full px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                className="flex items-center gap-3 w-full px-4 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               >
-                <LogOut className="h-5 w-5 mr-3" />
+                <LogOut className="h-5 w-5" />
                 {t('actions.logout')}
               </button>
             </div>
