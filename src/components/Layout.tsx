@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { BarChart3, Truck, Search, User, LogOut, Menu, X, Plus } from 'lucide-react'
+import { BarChart3, Truck, Search, User, LogOut, Menu, X, Plus, Home } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
@@ -82,6 +82,14 @@ export default function Layout() {
             {/* Right side */}
             <div className={`hidden sm:flex sm:items-center sm:gap-4 sm:mx-6 ${rtl ? 'flex-row-reverse' : ''}`}>
               <Link
+                to="/"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-blue-700"
+                title={t('nav.home')}
+                aria-label={t('nav.home')}
+              >
+                <Home className="h-4 w-4" />
+              </Link>
+              <Link
                 to="/shipments/create"
                 className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
@@ -109,7 +117,15 @@ export default function Layout() {
             </div>
 
             {/* Mobile menu button */}
-            <div className="sm:hidden flex items-center">
+            <div className="sm:hidden flex items-center gap-2">
+              <Link
+                to="/"
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+                title={t('nav.home')}
+                aria-label={t('nav.home')}
+              >
+                <Home className="h-6 w-6" />
+              </Link>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"

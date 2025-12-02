@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, Home } from 'lucide-react'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 
@@ -61,7 +61,10 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center px-4 relative">
-      <div className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} z-10`}>
+      <div className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} z-10 flex items-center gap-2`}>
+        <Link to="/" className="inline-flex items-center justify-center h-8 w-8 rounded-md bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm">
+          <Home className="h-4 w-4" />
+        </Link>
         <LanguageSwitcher />
       </div>
       {/* Texture overlay (grunge/rough) using SVG turbulence, tinted by the blue gradient */}
