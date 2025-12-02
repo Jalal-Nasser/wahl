@@ -48,23 +48,23 @@ export default function Header() {
       {/* Top bar */}
       <div className="bg-blue-900 text-white py-2">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex gap-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6">
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
-                <span className="rtl-ltr">{settings?.phone || '+966 12 345 6789'}</span>
+                <span className="rtl-ltr whitespace-nowrap">{settings?.phone || '+966 12 345 6789'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <span className="rtl-ltr">{settings?.email || 'info@wahl.sa'}</span>
+                <span className="rtl-ltr whitespace-nowrap truncate max-w-[140px] sm:max-w-none">{settings?.email || 'info@wahl.sa'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
-                <span>{settings?.location ? settings.location : (i18n.language.startsWith('ar') ? 'الدمام, المملكة العربية السعودية' : 'Dammam, Saudi Arabia')}</span>
+                <span className="whitespace-nowrap">{settings?.location ? settings.location : (i18n.language.startsWith('ar') ? 'الدمام, المملكة العربية السعودية' : 'Dammam, Saudi Arabia')}</span>
               </div>
             </div>
-            <div className="flex gap-4">
-              <span className="rtl-ltr">{formatNow()}</span>
+            <div className="hidden sm:flex gap-4 mt-2 sm:mt-0">
+              <span className="rtl-ltr whitespace-nowrap">{formatNow()}</span>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-8">
+          <nav className="hidden md:flex gap-8 items-center">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -90,6 +90,12 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/login"
+              className="bg-blue-900 hover:bg-blue-800 text-white px-3 py-1.5 rounded text-sm font-medium"
+            >
+              {t('auth.sign_in')}
+            </Link>
           </nav>
 
           {/* Mobile menu button */}

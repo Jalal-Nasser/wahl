@@ -35,7 +35,9 @@
     "forgot_password": "Forgot your password?",
     "welcome_back": "Welcome Back",
     "sign_in_sub": "Sign in to your account",
-    "complete_verification": "Please complete verification"
+    "complete_verification": "Please complete verification",
+    "error_incorrect_password": "The password you entered is incorrect. Please try again or click 'Forgot Password'",
+    "error_account_not_found": "We couldn't find an account with that email address. Please check and try again."
   },
   "topbar": {
     "hours": "Mon-Fri: 8:00-18:00"

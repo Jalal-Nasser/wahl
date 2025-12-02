@@ -74,11 +74,14 @@ export default function Login() {
             <p className="text-gray-600">{t('auth.sign_in_sub')}</p>
           </div>
 
-          {(error || formError) && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md" role="alert" aria-live="assertive">
-              <p className="text-red-600 text-sm">{formError || error}</p>
-            </div>
-          )}
+          {(() => {
+            const msg = formError || (errorCode === 'INCORRECT_PASSWORD' ? t('auth.error_incorrect_password') : errorCode === 'ACCOUNT_NOT_FOUND' ? t('auth.error_account_not_found') : error || null)
+            return msg ? (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md" role="alert" aria-live="assertive">
+                <p className="text-red-600 text-sm">{msg}</p>
+              </div>
+            ) : null
+          })()}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

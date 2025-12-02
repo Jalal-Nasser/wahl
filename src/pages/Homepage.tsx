@@ -188,6 +188,12 @@ export default function Homepage() {
             {t('actions.get_started')}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
+          <Link
+            to="/login"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold inline-flex items-center ml-4"
+          >
+            {t('auth.sign_in')}
+          </Link>
         </div>
       </section>
 
