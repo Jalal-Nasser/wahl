@@ -145,6 +145,13 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+              <Link
+                to="/login"
+                className="bg-blue-900 hover:bg-blue-800 text-white py-2 px-4 rounded-md font-medium mx-4"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('auth.sign_in')}
+              </Link>
               <div className="mt-2 px-4">
                 <LanguageSwitcher />
               </div>

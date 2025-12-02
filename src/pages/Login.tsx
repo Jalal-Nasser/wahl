@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { useTranslation } from 'react-i18next'
 
 export default function Login() {
@@ -59,7 +60,38 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center px-4 relative">
+      <div className={`absolute top-4 ${rtl ? 'left-4' : 'right-4'} z-10`}>
+        <LanguageSwitcher />
+      </div>
+      {/* Texture overlay (grunge/rough) using SVG turbulence, tinted by the blue gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-30 mix-blend-multiply"
+        style={{
+          backgroundImage:
+            'url("data:image/svg+xml;utf8,\
+<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'512\' height=\'512\'>\
+  <filter id=\'noise\'>\
+    <feTurbulence type=\'fractalNoise\' baseFrequency=\'0.06\' numOctaves=\'4\' seed=\'2\'/>\
+    <feColorMatrix type=\'matrix\' values=\'0.9 0 0 0 0  0 0.9 0 0 0  0 0 0.9 0 0  0 0 0 1 0\'/>\
+    <feComponentTransfer>\
+      <feFuncA type=\'gamma\' amplitude=\'1\' exponent=\'0.7\' offset=\'0\'/>\
+    </feComponentTransfer>\
+  </filter>\
+  <rect width=\'100%25\' height=\'100%25\' filter=\'url(#noise)\' fill=\'#0b3a6b\' opacity=\'0.9\'/>\
+</svg>")',
+          backgroundSize: '640px 640px',
+          backgroundRepeat: 'repeat'
+        }}
+      />
+      {/* Subtle vignette to deepen edges */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'radial-gradient(ellipse at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.25) 100%)'
+        }}
+      />
       <div className="max-w-md w-full">
         {/* Logo and Title */}
         <div className="text-center mb-8">

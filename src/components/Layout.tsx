@@ -163,6 +163,9 @@ export default function Layout() {
                 <LogOut className="h-5 w-5" />
                 {t('actions.logout')}
               </button>
+              <div className="px-4 pb-3">
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
         )}
