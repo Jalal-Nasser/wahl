@@ -13,7 +13,12 @@ export default function Dashboard() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const formatCurrency = (amount: number) => {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US'
+    const currency = i18n.language.startsWith('ar') ? 'SAR' : 'USD'
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount)
+  }
 
   const loadDashboardData = useCallback(async () => {
     try {
@@ -179,7 +184,7 @@ export default function Dashboard() {
           />
           <StatCard
             title={t('analytics.revenue')}
-            value={`$${analytics.total_revenue.toFixed(2)}`}
+            value={formatCurrency(analytics.total_revenue)}
             icon={DollarSign}
           />
         </div>
@@ -227,14 +232,14 @@ export default function Dashboard() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(shipment.status)}`}>
-                      {shipment.status.replace('_', ' ').toUpperCase()}
+                      {t(`shipments.${shipment.status}`)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {shipment.service_type}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 rtl-ltr">
-                    ${shipment.cost?.toFixed(2) || '0.00'}
+                    {formatCurrency(shipment.cost || 0)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <Link

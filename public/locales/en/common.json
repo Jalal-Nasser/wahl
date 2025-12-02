@@ -91,6 +91,7 @@
     "pending": "Pending",
     "in_transit": "In Transit",
     "delivered": "Delivered",
+    "cancelled": "Cancelled",
     "created": "Created",
     "estimated_delivery": "Estimated Delivery",
     "actions": "Actions",
@@ -98,7 +99,16 @@
     "create_first": "Create Your First Shipment",
     "tracking_number": "Tracking Number",
     "service": "Service",
-    "cost": "Cost"
+    "cost": "Cost",
+    "sender": "Sender",
+    "recipient": "Recipient",
+    "carrier": "Carrier",
+    "date_range": "Date Range",
+    "date_all": "All Time",
+    "date_today": "Today",
+    "date_week": "This Week",
+    "date_month": "This Month",
+    "adjust_filters": "Try adjusting your search or filter criteria"
   },
   "analytics": {
     "total_shipments": "Total Shipments",
@@ -108,7 +118,21 @@
     "success_rate": "Success Rate",
     "daily_shipments": "Daily Shipments",
     "export_data": "Export Data",
-    "revenue": "Revenue"
+    "revenue": "Revenue",
+    "insights_sub": "Comprehensive insights into your shipping operations",
+    "date_last_7": "Last 7 days",
+    "date_last_30": "Last 30 days",
+    "date_last_90": "Last 90 days",
+    "date_last_year": "Last year",
+    "chart_bar": "Bar",
+    "chart_line": "Line",
+    "avg_delivery_time": "Avg Delivery Time",
+    "days": "days",
+    "status_distribution": "Shipment Status Distribution",
+    "carrier_performance": "Carrier Performance",
+    "recent_shipments": "Recent Shipments",
+    "latest_activity": "Latest shipping activity",
+    "no_shipments": "No shipments found"
   },
   "tracking_page": {
     "order_placed": "Order Placed",
@@ -142,5 +166,213 @@
   "dashboard": {
     "welcome": "Welcome back, {{name}}!",
     "subtext": "Here's what's happening with your shipments today."
+  },
+  "about": {
+    "title": "About WAHL",
+    "sub": "Leading the logistics industry with innovation, reliability, and exceptional service.",
+    "our_story_title": "Our Story",
+    "our_story_p1": "Founded in 1999, WAHL has grown from a small local logistics company to a global leader in supply chain management.",
+    "our_story_p2": "Today, we serve thousands of clients worldwide, managing complex logistics operations with precision and reliability.",
+    "our_story_p3": "We believe in building long-lasting partnerships and delivering customized solutions.",
+    "stats_clients": "Happy Clients",
+    "stats_awards": "Industry Awards",
+    "stats_countries": "Countries Served",
+    "stats_years": "Years Experience",
+    "timeline_title": "Our Journey",
+    "timeline_sub": "Key milestones that shaped our company and established us as industry leaders.",
+    "team_title": "Meet Our Leadership Team",
+    "team_sub": "Experienced professionals dedicated to exceptional logistics solutions.",
+    "mission_title": "Our Mission",
+    "mission_text": "To provide innovative, reliable logistics solutions that empower businesses to succeed.",
+    "vision_title": "Our Vision",
+    "vision_text": "To be the world's most trusted logistics partner.",
+    "team_member1": {
+      "name": "John Smith",
+      "position": "CEO & Founder",
+      "bio": "With over 25 years in logistics, John founded WAHL with a vision to revolutionize supply chain management."
+    },
+    "team_member2": {
+      "name": "Sarah Johnson",
+      "position": "Operations Director",
+      "bio": "Sarah brings extensive experience in global logistics operations and supply chain optimization."
+    },
+    "team_member3": {
+      "name": "Michael Chen",
+      "position": "Technology Director",
+      "bio": "Michael leads our digital transformation initiatives, implementing cutting-edge logistics technology."
+    },
+    "team_member4": {
+      "name": "Emily Rodriguez",
+      "position": "Customer Relations Manager",
+      "bio": "Emily ensures exceptional customer experience and builds lasting relationships with our clients."
+    },
+    "timeline_1999": {
+      "title": "Company Founded",
+      "description": "WAHL was established with a mission to provide reliable logistics solutions."
+    },
+    "timeline_2005": {
+      "title": "Global Expansion",
+      "description": "Opened international offices and established global shipping partnerships."
+    },
+    "timeline_2012": {
+      "title": "Technology Innovation",
+      "description": "Launched proprietary tracking system and digital logistics platform."
+    },
+    "timeline_2018": {
+      "title": "Industry Leadership",
+      "description": "Recognized as industry leader with multiple awards for excellence."
+    },
+    "timeline_2024": {
+      "title": "Sustainability Focus",
+      "description": "Implemented green logistics initiatives and carbon-neutral shipping options."
+    }
+  },
+  "clients_page": {
+    "title": "Our Clients",
+    "sub": "Trusted by leading companies across industries for reliable logistics solutions."
+  },
+  "services_page": {
+    "title": "Our Services",
+    "sub": "We operate a modern fleet and deliver end-to-end logistics solutions.",
+    "cta_title": "Ready to Optimize Your Logistics?",
+    "cta_sub": "Contact us today to discuss comprehensive logistics solutions.",
+    "cta_quote": "Get a Free Quote",
+    "cta_contact": "Contact Our Team",
+    "ground_title": "Ground Transportation",
+    "ground_desc": "Reliable and efficient ground transportation across the country.",
+    "ground_features": ["Express Delivery", "Temperature Controlled", "Real-time Tracking", "Nationwide Coverage"],
+    "ocean_title": "Ocean Freight",
+    "ocean_desc": "Comprehensive ocean freight services for international shipping.",
+    "ocean_features": ["FCL & LCL Services", "Port-to-Port", "Customs Clearance", "Worldwide Coverage"],
+    "air_title": "Air Freight",
+    "air_desc": "Fast and secure air freight services for time-sensitive shipments.",
+    "air_features": ["Express Services", "Door-to-Door", "Priority Handling", "Global Network"],
+    "package_title": "Package Delivery",
+    "package_desc": "Professional package delivery with careful handling and timely delivery.",
+    "package_features": ["Same Day Delivery", "Signature Required", "Insurance Available", "Secure Handling"],
+    "ware_title": "Warehousing",
+    "ware_desc": "State-of-the-art warehousing with advanced inventory management.",
+    "ware_features": ["Climate Controlled", "24/7 Security", "Inventory Management", "Flexible Storage"],
+    "scm_title": "Supply Chain Management",
+    "scm_desc": "End-to-end supply chain solutions that optimize operations.",
+    "scm_features": ["End-to-End Solutions", "Cost Optimization", "Risk Management", "Global Coverage"]
+  },
+  "contact": {
+    "title": "Contact Us",
+    "sub": "Get in touch with our logistics experts.",
+    "phone": "Phone",
+    "email": "Email",
+    "hours": "Business Hours",
+    "head_office": "Head Office",
+    "regional_office": "Regional Office",
+    "map_placeholder": "Map Location",
+    "send_us_message": "Send Us a Message",
+    "form_intro": "Fill out the form below and we'll get back to you within 24 hours.",
+    "form_full_name": "Full Name",
+    "form_email": "Email Address",
+    "form_phone": "Phone Number",
+    "form_subject": "Subject",
+    "form_message": "Message",
+    "form_submit": "Send Message",
+    "subject_select": "Select a subject",
+    "subject_quote": "Request a Quote",
+    "subject_support": "Customer Support",
+    "subject_partnership": "Partnership Inquiry",
+    "subject_careers": "Careers",
+    "subject_other": "Other"
+  },
+  "blog": {
+    "title": "Logistics Insights",
+    "sub": "Stay updated with trends, best practices, and innovations.",
+    "featured": "Featured",
+    "read_more": "Read More",
+    "search_placeholder": "Search articles...",
+    "popular_tags": "Popular tags:",
+    "no_articles": "No articles found matching your criteria.",
+    "subscribe": "Subscribe",
+    "newsletter_title": "Stay Updated with Logistics Insights",
+    "newsletter_sub": "Subscribe to receive the latest articles and news.",
+    "all": "All",
+    "email_placeholder": "Enter your email address"
+  },
+  "register": {
+    "title": "Create Account",
+    "sub": "Join thousands of satisfied customers",
+    "full_name": "Full Name",
+    "email": "Email Address",
+    "password": "Password",
+    "confirm_password": "Confirm Password",
+    "terms_preamble": "I agree to the",
+    "terms": "Terms and Conditions",
+    "submit": "Create account",
+    "creating": "Creating account...",
+    "already": "Already have an account?",
+    "sign_in": "Sign in to existing account",
+    "demo": "Demo: Create any account to test the platform"
+  },
+  "create_shipment": {
+    "back": "Back to Shipments",
+    "title": "Create New Shipment",
+    "subtitle": "Follow the steps below to create your shipment",
+    "steps": {
+      "sender": "Sender Information",
+      "recipient": "Recipient Information",
+      "package": "Package Details",
+      "carrier": "Select Carrier",
+      "review": "Review & Confirm"
+    },
+    "labels": {
+      "sender": "Sender",
+      "recipient": "Recipient",
+      "email": "Email",
+      "phone": "Phone",
+      "street": "Street Address",
+      "city": "City",
+      "state": "State",
+      "zip": "ZIP Code",
+      "country": "Country",
+      "weight": "Weight",
+      "dimensions": "Dimensions",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height",
+      "value": "Value",
+      "service": "Service",
+      "description": "Description",
+      "shipping_options": "Shipping Options",
+      "base_rate": "Base Rate",
+      "insurance": "Insurance",
+      "signature": "Signature Required",
+      "total_cost": "Total Cost",
+      "summary": "Shipment Summary"
+    },
+    "placeholders": {
+      "name": "Full Name",
+      "email": "your.email@example.com",
+      "phone": "+1 (555) 123-4567",
+      "street": "Street address",
+      "city": "City",
+      "state": "State",
+      "zip": "ZIP code",
+      "country": "Country",
+      "description": "Describe the package contents"
+    },
+    "options": {
+      "insurance": "Add insurance coverage (+$5.00)",
+      "signature": "Require signature on delivery (+$3.00)"
+    },
+    "buttons": {
+      "previous": "Previous",
+      "next": "Next",
+      "create": "Create Shipment",
+      "creating": "Creating..."
+    },
+    "use_saved_address": "Use saved address"
+  },
+  "service": {
+    "standard": "Standard",
+    "express": "Express",
+    "overnight": "Overnight",
+    "ground": "Ground"
   }
 }

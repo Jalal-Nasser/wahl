@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { ClientLogo } from '@/types/database'
@@ -6,6 +7,7 @@ import { getClients } from '@/lib/contentProvider'
 
 export default function Clients() {
   const [clients, setClients] = useState<ClientLogo[]>([])
+  const { t } = useTranslation()
 
   useEffect(() => {
     const loadClients = async () => {
@@ -30,8 +32,8 @@ export default function Clients() {
 
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Our Clients</h1>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto">Trusted by leading companies across industries for reliable logistics solutions.</p>
+          <h1 className="text-5xl font-bold mb-6">{t('clients_page.title')}</h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">{t('clients_page.sub')}</p>
         </div>
       </section>
 

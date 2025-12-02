@@ -183,20 +183,20 @@ const Shipments: React.FC = () => {
                       <option value="pending">{t('shipments.pending')}</option>
                       <option value="in_transit">{t('shipments.in_transit')}</option>
                       <option value="delivered">{t('shipments.delivered')}</option>
-                      <option value="cancelled">Cancelled</option>
+                      <option value="cancelled">{t('shipments.cancelled')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('shipments.date_range')}</label>
                     <select
                       value={dateFilter}
                       onChange={(e) => setDateFilter(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                      <option value="all">All Time</option>
-                      <option value="today">Today</option>
-                      <option value="week">This Week</option>
-                      <option value="month">This Month</option>
+                      <option value="all">{t('shipments.date_all')}</option>
+                      <option value="today">{t('shipments.date_today')}</option>
+                      <option value="week">{t('shipments.date_week')}</option>
+                      <option value="month">{t('shipments.date_month')}</option>
                     </select>
                   </div>
                 </div>
@@ -262,11 +262,11 @@ const Shipments: React.FC = () => {
             <div className="p-8 text-center">
               <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {searchTerm || statusFilter !== 'all' || dateFilter !== 'all' ? t('shipments.no_shipments') : 'No shipments yet'}
+                {t('shipments.no_shipments')}
               </h3>
               <p className="text-gray-600 mb-4">
                 {searchTerm || statusFilter !== 'all' || dateFilter !== 'all'
-                  ? 'Try adjusting your search or filter criteria'
+                  ? t('shipments.adjust_filters')
                   : t('shipments.create_first')}
               </p>
               {!searchTerm && statusFilter === 'all' && dateFilter === 'all' && (
@@ -285,19 +285,19 @@ const Shipments: React.FC = () => {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tracking Number
+                      {t('shipments.tracking_number')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('shipments.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sender
+                      {t('shipments.sender')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipient
+                      {t('shipments.recipient')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Carrier
+                      {t('shipments.carrier')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('shipments.created')}
@@ -321,7 +321,7 @@ const Shipments: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(shipment.status)}`}>
                           {getStatusIcon(shipment.status)}
-                          {shipment.status.replace('_', ' ').toUpperCase()}
+                          {t(`shipments.${shipment.status}`)}
                         </span>
                       </td>
                       <td className="px-6 py-4">

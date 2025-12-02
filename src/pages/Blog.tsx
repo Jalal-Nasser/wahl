@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Calendar, User, Clock, ArrowRight, Search, Tag } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const blogPosts = [
   {
@@ -82,6 +83,7 @@ const categories = ["All", "Industry Trends", "Sustainability", "Shipping Guide"
 const allTags = ["Supply Chain", "AI", "Innovation", "Green Logistics", "Sustainability", "Environment", "Ocean Freight", "Air Freight", "International Shipping", "Warehouse", "Automation", "Technology", "E-commerce", "Last Mile", "Delivery", "Risk Management", "Global Supply Chain", "Best Practices"];
 
 export default function Blog() {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedTag, setSelectedTag] = useState("");
@@ -104,12 +106,8 @@ export default function Blog() {
       {/* Page Header */}
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">
-            Logistics Insights
-          </h1>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-            Stay updated with the latest trends, best practices, and innovations in the logistics and supply chain industry.
-          </p>
+          <h1 className="text-5xl font-bold mb-6">{t('blog.title')}</h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">{t('blog.sub')}</p>
         </div>
       </section>
 
@@ -127,7 +125,7 @@ export default function Blog() {
                   />
                   <div className="absolute top-4 left-4">
                     <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Featured
+                      {t('blog.featured')}
                     </span>
                   </div>
                 </div>
@@ -155,7 +153,7 @@ export default function Blog() {
                       <span className="text-sm text-gray-600">{featuredPost.date}</span>
                     </div>
                     <button className="text-blue-600 hover:text-blue-700 font-semibold flex items-center space-x-1">
-                      <span>Read More</span>
+                      <span>{t('blog.read_more')}</span>
                       <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -175,7 +173,7 @@ export default function Blog() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search articles..."
+                placeholder={t('blog.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -194,14 +192,14 @@ export default function Blog() {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {category}
+                  {category === 'All' ? t('blog.all') : category}
                 </button>
               ))}
             </div>
             
             {/* Tag Filter */}
             <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-gray-600 font-medium">Popular tags:</span>
+              <span className="text-sm text-gray-600 font-medium">{t('blog.popular_tags')}</span>
               <button
                 onClick={() => setSelectedTag('')}
                 className={`px-3 py-1 rounded-full text-xs transition-colors duration-200 ${
@@ -210,7 +208,7 @@ export default function Blog() {
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                All
+                {t('blog.all')}
               </button>
               {allTags.slice(0, 8).map((tag) => (
                 <button
@@ -302,7 +300,7 @@ export default function Blog() {
           
           {filteredPosts.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No articles found matching your criteria.</p>
+              <p className="text-gray-500 text-lg">{t('blog.no_articles')}</p>
             </div>
           )}
         </div>
@@ -311,20 +309,16 @@ export default function Blog() {
       {/* Newsletter Section */}
       <section className="py-16 bg-blue-900 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">
-            Stay Updated with Logistics Insights
-          </h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Subscribe to our newsletter and receive the latest articles, industry news, and exclusive insights delivered directly to your inbox.
-          </p>
+          <h2 className="text-3xl font-bold mb-4">{t('blog.newsletter_title')}</h2>
+          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">{t('blog.newsletter_sub')}</p>
           <div className="max-w-md mx-auto flex gap-4">
             <input
               type="email"
-              placeholder="Enter your email address"
+              placeholder={t('blog.email_placeholder')}
               className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
             <button className="bg-white text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200">
-              Subscribe
+              {t('blog.subscribe')}
             </button>
           </div>
         </div>

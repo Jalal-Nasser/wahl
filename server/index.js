@@ -51,6 +51,54 @@ async function query(sql, params) {
   return rows
 }
 
+const translateCache = new Map()
+function detectLang(str) {
+  if (!str || typeof str !== 'string') return 'en'
+  return /[\u0600-\u06FF]/.test(str) ? 'ar' : 'en'
+}
+async function translateText(text, target) {
+  if (!text || !text.trim()) return ''
+  const source = detectLang(text)
+  if (source === target) return text
+  const key = `${source}:${target}:${text.slice(0, 200)}`
+  const memo = translateCache.get(key)
+  if (memo) return memo
+  try {
+    const url = new URL('https://api.mymemory.translated.net/get')
+    url.searchParams.set('q', text)
+    url.searchParams.set('langpair', `${source}|${target}`)
+    const res = await fetch(url.toString())
+    const data = await res.json()
+    const out = (data?.responseData?.translatedText && String(data.responseData.translatedText)) || text
+    translateCache.set(key, out)
+    return out
+  } catch {
+    return text
+  }
+}
+async function autoTranslations(payload) {
+  const enTitle = await translateText(payload.title || '', 'en')
+  const arTitle = await translateText(payload.title || '', 'ar')
+  const enSeoTitle = await translateText(payload.seo_title || '', 'en')
+  const arSeoTitle = await translateText(payload.seo_title || '', 'ar')
+  const enSeoDesc = await translateText(payload.seo_description || '', 'en')
+  const arSeoDesc = await translateText(payload.seo_description || '', 'ar')
+  const enBody = await translateText(payload.body_html || '', 'en')
+  const arBody = await translateText(payload.body_html || '', 'ar')
+  return {
+    title: { en: enTitle, ar: arTitle },
+    seo_title: { en: enSeoTitle, ar: arSeoTitle },
+    seo_description: { en: enSeoDesc, ar: arSeoDesc },
+    body_html: { en: enBody, ar: arBody },
+  }
+}
+async function ensureContentTranslationsColumn() {
+  const exists = await query('SELECT 1 FROM information_schema.columns WHERE table_schema=? AND table_name=? AND column_name=?', [process.env.MYSQL_DATABASE, 'wahl_content_sections', 'translations_json'])
+  if (!exists.length) {
+    await query('ALTER TABLE wahl_content_sections ADD COLUMN translations_json JSON')
+  }
+}
+
 function authMiddleware(req, res, next) {
   const header = req.headers.authorization || ''
   const token = header.startsWith('Bearer ') ? header.slice(7) : null
@@ -380,10 +428,25 @@ app.get('/api/cms/sections', authMiddleware, async (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
     const now = Date.now()
     if (cmsCache.sections && now - cmsCache.ts < 5000) return res.json(cmsCache.sections)
-    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections ORDER BY updated_at DESC')
-    cmsCache.sections = rows
+    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,translations_json,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections ORDER BY updated_at DESC')
+    const lang = (req.query.lang === 'ar' ? 'ar' : req.query.lang === 'en' ? 'en' : null)
+    const mapped = []
+    for (const r of rows) {
+      const out = { ...r }
+      if (lang && r.translations_json) {
+        try {
+          const tr = JSON.parse(r.translations_json)
+          if (tr?.title?.[lang]) out.title = tr.title[lang]
+          if (tr?.seo_title?.[lang]) out.seo_title = tr.seo_title[lang]
+          if (tr?.seo_description?.[lang]) out.seo_description = tr.seo_description[lang]
+          if (tr?.body_html?.[lang]) out.body_html = tr.body_html[lang]
+        } catch { void 0 }
+      }
+      mapped.push(out)
+    }
+    cmsCache.sections = mapped
     cmsCache.ts = now
-    res.json(rows)
+    res.json(mapped)
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
@@ -392,8 +455,19 @@ app.get('/api/cms/sections', authMiddleware, async (req, res) => {
 app.get('/api/cms/sections/:id', authMiddleware, async (req, res) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' })
-    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections WHERE id=?', [req.params.id])
-    res.json(rows[0] || null)
+    const rows = await query('SELECT id,slug,title,seo_title,seo_description,body_html,translations_json,published_at,schedule_at,updated_by,updated_at FROM wahl_content_sections WHERE id=?', [req.params.id])
+    const lang = (req.query.lang === 'ar' ? 'ar' : req.query.lang === 'en' ? 'en' : null)
+    const row = rows[0] || null
+    if (row && lang && row.translations_json) {
+      try {
+        const tr = JSON.parse(row.translations_json)
+        if (tr?.title?.[lang]) row.title = tr.title[lang]
+        if (tr?.seo_title?.[lang]) row.seo_title = tr.seo_title[lang]
+        if (tr?.seo_description?.[lang]) row.seo_description = tr.seo_description[lang]
+        if (tr?.body_html?.[lang]) row.body_html = tr.body_html[lang]
+      } catch { void 0 }
+    }
+    res.json(row)
   } catch (e) {
     res.status(500).json({ error: e.message })
   }
@@ -405,7 +479,9 @@ app.post('/api/cms/sections', authMiddleware, async (req, res) => {
     const { slug, title, body_html, seo_title, seo_description } = req.body
     if (!slug || !title) return res.status(400).json({ error: 'Missing slug or title' })
     const id = crypto.randomUUID().replace(/-/g, '')
-    await query('INSERT INTO wahl_content_sections (id,slug,title,body_html,seo_title,seo_description,updated_by,updated_at) VALUES (?,?,?,?,?,?,?,NOW())', [id, slug, title, body_html || '', seo_title || null, seo_description || null, req.user.id])
+    await ensureContentTranslationsColumn()
+    const tr = await autoTranslations({ title, body_html, seo_title, seo_description })
+    await query('INSERT INTO wahl_content_sections (id,slug,title,body_html,seo_title,seo_description,translations_json,updated_by,updated_at) VALUES (?,?,?,?,?,?,?,?,NOW())', [id, slug, title, body_html || '', seo_title || null, seo_description || null, JSON.stringify(tr), req.user.id])
     cmsCache.sections = null
     res.json({ id })
   } catch (e) {
@@ -420,7 +496,9 @@ app.put('/api/cms/sections/:id', authMiddleware, async (req, res) => {
     if (!prev.length) return res.status(404).json({ error: 'Not found' })
     await query('INSERT INTO wahl_content_versions (id,section_id,version,body_html,updated_by,created_at) VALUES (?,?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.params.id, (prev[0].version || 0) + 1, prev[0].body_html || '', req.user.id])
     const { title, body_html, seo_title, seo_description } = req.body
-    await query('UPDATE wahl_content_sections SET title=COALESCE(?, title), body_html=COALESCE(?, body_html), seo_title=COALESCE(?, seo_title), seo_description=COALESCE(?, seo_description), updated_by=?, updated_at=NOW() WHERE id=?', [title || null, body_html || null, seo_title || null, seo_description || null, req.user.id, req.params.id])
+    await ensureContentTranslationsColumn()
+    const tr = await autoTranslations({ title: title ?? prev[0].title, body_html: body_html ?? prev[0].body_html, seo_title: seo_title ?? prev[0].seo_title, seo_description: seo_description ?? prev[0].seo_description })
+    await query('UPDATE wahl_content_sections SET title=COALESCE(?, title), body_html=COALESCE(?, body_html), seo_title=COALESCE(?, seo_title), seo_description=COALESCE(?, seo_description), translations_json=?, updated_by=?, updated_at=NOW() WHERE id=?', [title || null, body_html || null, seo_title || null, seo_description || null, JSON.stringify(tr), req.user.id, req.params.id])
     cmsCache.sections = null
     await query('INSERT INTO wahl_audit_logs (id,user_id,action,target,created_at) VALUES (?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.user.id, 'content_update', req.params.id])
     res.json({ ok: true })
@@ -435,6 +513,17 @@ app.delete('/api/cms/sections/:id', authMiddleware, async (req, res) => {
     await query('DELETE FROM wahl_content_sections WHERE id=?', [req.params.id])
     cmsCache.sections = null
     await query('INSERT INTO wahl_audit_logs (id,user_id,action,target,created_at) VALUES (?,?,?,?,NOW())', [crypto.randomUUID().replace(/-/g, ''), req.user.id, 'content_delete', req.params.id])
+    res.json({ ok: true })
+  } catch (e) {
+    res.status(500).json({ error: e.message })
+  }
+})
+
+app.post('/api/admin/migrate-content-translations', async (req, res) => {
+  try {
+    const token = req.headers['x-install-token']
+    if (!process.env.INSTALL_TOKEN || token !== process.env.INSTALL_TOKEN) return res.status(401).json({ error: 'Unauthorized' })
+    await ensureContentTranslationsColumn()
     res.json({ ok: true })
   } catch (e) {
     res.status(500).json({ error: e.message })

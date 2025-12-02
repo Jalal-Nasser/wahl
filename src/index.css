@@ -16,7 +16,6 @@
 /* RTL support overrides */
 [dir="rtl"] body { direction: rtl; }
 [dir="rtl"] .text-left { text-align: right; }
-[dir="rtl"] .text-right { text-align: left; }
 
 [dir="rtl"] .ml-1 { margin-left: 0; margin-right: 0.25rem; }
 [dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
@@ -27,14 +26,9 @@
 [dir="rtl"] .mr-3 { margin-right: 0; margin-left: 0.75rem; }
 [dir="rtl"] .mr-4 { margin-right: 0; margin-left: 1rem; }
 
-[dir="rtl"] .pl-3 { padding-left: 0; padding-right: 0.75rem; }
-[dir="rtl"] .pl-10 { padding-left: 0; padding-right: 2.5rem; }
-[dir="rtl"] .pr-3 { padding-right: 0; padding-left: 0.75rem; }
+/* do not flip padding utilities; components set explicit padding per side */
 
-[dir="rtl"] .left-0 { left: auto; right: 0; }
-[dir="rtl"] .left-3 { left: auto; right: 0.75rem; }
-[dir="rtl"] .left-4 { left: auto; right: 1rem; }
-[dir="rtl"] .right-4 { right: auto; left: 1rem; }
+/* Do not auto-flip left-* utility positions; components control explicitly */
 
 [dir="rtl"] .border-l-4 { border-left-width: 0; border-right-width: 4px; }
 

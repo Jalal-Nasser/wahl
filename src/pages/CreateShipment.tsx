@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, MapPin, Truck, DollarSign, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/authStore';
 import { Carrier, Address } from '../types/database';
@@ -44,6 +45,7 @@ interface FormData {
 
 const CreateShipment: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
   const [currentStep, setCurrentStep] = useState(1);
   const [carriers, setCarriers] = useState<Carrier[]>([]);
@@ -222,12 +224,18 @@ const CreateShipment: React.FC = () => {
   };
 
   const steps = [
-    { number: 1, title: 'Sender Information', icon: User },
-    { number: 2, title: 'Recipient Information', icon: MapPin },
-    { number: 3, title: 'Package Details', icon: Package },
-    { number: 4, title: 'Shipping Options', icon: Truck },
-    { number: 5, title: 'Review & Confirm', icon: DollarSign }
+    { number: 1, title: t('create_shipment.steps.sender'), icon: User },
+    { number: 2, title: t('create_shipment.steps.recipient'), icon: MapPin },
+    { number: 3, title: t('create_shipment.steps.package'), icon: Package },
+    { number: 4, title: t('create_shipment.steps.carrier'), icon: Truck },
+    { number: 5, title: t('create_shipment.steps.review'), icon: DollarSign }
   ];
+
+  const formatCurrency = (amount: number) => {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    const currency = i18n.language.startsWith('ar') ? 'SAR' : 'USD';
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -235,7 +243,7 @@ const CreateShipment: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Sender Information</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('create_shipment.steps.sender')}</h2>
               {savedAddresses.length > 0 && (
                 <select
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -259,7 +267,7 @@ const CreateShipment: React.FC = () => {
                     }
                   }}
                 >
-                  <option value="">Use saved address</option>
+                  <option value="">{t('create_shipment.use_saved_address')}</option>
                   {savedAddresses.map(address => (
                     <option key={address.id} value={address.id}>
                       {address.name} - {address.street}, {address.city}
@@ -271,7 +279,7 @@ const CreateShipment: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.placeholders.name')} *</label>
                 <input
                   type="text"
                   required
@@ -281,7 +289,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.email')} *</label>
                 <input
                   type="email"
                   required
@@ -291,7 +299,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.phone')} *</label>
                 <input
                   type="tel"
                   required
@@ -301,7 +309,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.company', { defaultValue: 'Company' })}</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -312,7 +320,7 @@ const CreateShipment: React.FC = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.street')} *</label>
               <input
                 type="text"
                 required
@@ -324,7 +332,7 @@ const CreateShipment: React.FC = () => {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.city')} *</label>
                 <input
                   type="text"
                   required
@@ -334,7 +342,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.state')} *</label>
                 <input
                   type="text"
                   required
@@ -344,7 +352,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.zip')} *</label>
                 <input
                   type="text"
                   required
@@ -354,7 +362,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.country')} *</label>
                 <input
                   type="text"
                   required
@@ -371,7 +379,7 @@ const CreateShipment: React.FC = () => {
         return (
           <div className="space-y-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Recipient Information</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{t('create_shipment.steps.recipient')}</h2>
               {savedAddresses.length > 0 && (
                 <select
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -395,7 +403,7 @@ const CreateShipment: React.FC = () => {
                     }
                   }}
                 >
-                  <option value="">Use saved address</option>
+                  <option value="">{t('create_shipment.use_saved_address')}</option>
                   {savedAddresses.map(address => (
                     <option key={address.id} value={address.id}>
                       {address.name} - {address.street}, {address.city}
@@ -407,7 +415,7 @@ const CreateShipment: React.FC = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.placeholders.name')} *</label>
                 <input
                   type="text"
                   required
@@ -417,7 +425,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.email')} *</label>
                 <input
                   type="email"
                   required
@@ -427,7 +435,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.phone')} *</label>
                 <input
                   type="tel"
                   required
@@ -437,7 +445,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.company', { defaultValue: 'Company' })}</label>
                 <input
                   type="text"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -448,7 +456,7 @@ const CreateShipment: React.FC = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Street Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.street')} *</label>
               <input
                 type="text"
                 required
@@ -460,7 +468,7 @@ const CreateShipment: React.FC = () => {
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">City *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.city')} *</label>
                 <input
                   type="text"
                   required
@@ -470,7 +478,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">State *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.state')} *</label>
                 <input
                   type="text"
                   required
@@ -480,7 +488,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">ZIP Code *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.zip')} *</label>
                 <input
                   type="text"
                   required
@@ -490,7 +498,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.country')} *</label>
                 <input
                   type="text"
                   required
@@ -506,11 +514,11 @@ const CreateShipment: React.FC = () => {
       case 3:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Package Details</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('create_shipment.steps.package')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Weight (lbs) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.weight')} *</label>
                 <input
                   type="number"
                   step="0.1"
@@ -521,7 +529,7 @@ const CreateShipment: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Value ($) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.value')} *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -534,12 +542,12 @@ const CreateShipment: React.FC = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Dimensions (inches)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.dimensions')}</label>
               <div className="grid grid-cols-4 gap-2">
                 <input
                   type="number"
                   step="0.1"
-                  placeholder="Length"
+                  placeholder={t('create_shipment.labels.length')}
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={formData.package.length}
                   onChange={(e) => setFormData(prev => ({ ...prev, package: { ...prev.package, length: e.target.value } }))}
@@ -547,7 +555,7 @@ const CreateShipment: React.FC = () => {
                 <input
                   type="number"
                   step="0.1"
-                  placeholder="Width"
+                  placeholder={t('create_shipment.labels.width')}
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={formData.package.width}
                   onChange={(e) => setFormData(prev => ({ ...prev, package: { ...prev.package, width: e.target.value } }))}
@@ -555,7 +563,7 @@ const CreateShipment: React.FC = () => {
                 <input
                   type="number"
                   step="0.1"
-                  placeholder="Height"
+                  placeholder={t('create_shipment.labels.height')}
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={formData.package.height}
                   onChange={(e) => setFormData(prev => ({ ...prev, package: { ...prev.package, height: e.target.value } }))}
@@ -565,23 +573,23 @@ const CreateShipment: React.FC = () => {
                   value={formData.package.service_type}
                   onChange={(e) => setFormData(prev => ({ ...prev, package: { ...prev.package, service_type: e.target.value } }))}
                 >
-                  <option value="standard">Standard</option>
-                  <option value="express">Express</option>
-                  <option value="overnight">Overnight</option>
-                  <option value="ground">Ground</option>
+                  <option value="standard">{t('service.standard')}</option>
+                  <option value="express">{t('service.express')}</option>
+                  <option value="overnight">{t('service.overnight')}</option>
+                  <option value="ground">{t('service.ground')}</option>
                 </select>
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Package Description *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('create_shipment.labels.description')} *</label>
               <textarea
                 rows={3}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={formData.package.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, package: { ...prev.package, description: e.target.value } }))}
-                placeholder="Describe the contents of your package..."
+                placeholder={t('create_shipment.placeholders.description')}
               />
             </div>
           </div>
@@ -590,10 +598,10 @@ const CreateShipment: React.FC = () => {
       case 4:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Options</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('create_shipment.labels.shipping_options')}</h2>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">Select Carrier *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-4">{t('shipments.carrier')} *</label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {carriers.map((carrier) => (
                   <div
@@ -611,8 +619,8 @@ const CreateShipment: React.FC = () => {
                         <p className="text-sm text-gray-600">{carrier.description}</p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900">${carrier.base_rate}</p>
-                        <p className="text-xs text-gray-600">Base rate</p>
+                        <p className="font-medium text-gray-900">{formatCurrency(parseFloat(carrier.base_rate))}</p>
+                        <p className="text-xs text-gray-600">{t('create_shipment.labels.base_rate')}</p>
                       </div>
                     </div>
                   </div>
@@ -630,7 +638,7 @@ const CreateShipment: React.FC = () => {
                   onChange={(e) => setFormData(prev => ({ ...prev, insurance: e.target.checked }))}
                 />
                 <label htmlFor="insurance" className="ml-2 block text-sm text-gray-900">
-                  Add insurance coverage (+$5.00)
+                  {t('create_shipment.options.insurance')}
                 </label>
               </div>
               
@@ -643,7 +651,7 @@ const CreateShipment: React.FC = () => {
                   onChange={(e) => setFormData(prev => ({ ...prev, signature_required: e.target.checked }))}
                 />
                 <label htmlFor="signature" className="ml-2 block text-sm text-gray-900">
-                  Require signature on delivery (+$3.00)
+                  {t('create_shipment.options.signature')}
                 </label>
               </div>
             </div>
@@ -659,14 +667,14 @@ const CreateShipment: React.FC = () => {
 
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Review & Confirm</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('create_shipment.steps.review')}</h2>
             
             <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Shipment Summary</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">{t('create_shipment.labels.summary')}</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Sender</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">{t('create_shipment.labels.sender')}</h4>
                   <p className="text-sm text-gray-600">{formData.sender.name}</p>
                   <p className="text-sm text-gray-600">{formData.sender.email}</p>
                   <p className="text-sm text-gray-600">{formData.sender.street}</p>
@@ -674,7 +682,7 @@ const CreateShipment: React.FC = () => {
                 </div>
                 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Recipient</h4>
+                  <h4 className="font-medium text-gray-900 mb-2">{t('create_shipment.labels.recipient')}</h4>
                   <p className="text-sm text-gray-600">{formData.recipient.name}</p>
                   <p className="text-sm text-gray-600">{formData.recipient.email}</p>
                   <p className="text-sm text-gray-600">{formData.recipient.street}</p>
@@ -683,43 +691,43 @@ const CreateShipment: React.FC = () => {
               </div>
               
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-2">Package Details</h4>
+                <h4 className="font-medium text-gray-900 mb-2">{t('tracking_page.package_details')}</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
                   <div>
-                    <p>Weight: {formData.package.weight} lbs</p>
-                    <p>Dimensions: {formData.package.length}" × {formData.package.width}" × {formData.package.height}"</p>
-                    <p>Value: ${formData.package.value}</p>
+                    <p>{t('tracking_page.weight')}: {formData.package.weight} lbs</p>
+                    <p>{t('tracking_page.dimensions')}: {formData.package.length}" × {formData.package.width}" × {formData.package.height}"</p>
+                    <p>{t('tracking_page.value')}: {formatCurrency(parseFloat(formData.package.value || '0'))}</p>
                   </div>
                   <div>
-                    <p>Service: {formData.package.service_type}</p>
-                    <p>Carrier: {selectedCarrier?.name}</p>
-                    <p>Description: {formData.package.description}</p>
+                    <p>{t('tracking_page.service')}: {formData.package.service_type}</p>
+                    <p>{t('tracking_page.carrier')}: {selectedCarrier?.name}</p>
+                    <p>{t('tracking_page.description')}: {formData.package.description}</p>
                   </div>
                 </div>
               </div>
               
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-2">Cost Breakdown</h4>
+                <h4 className="font-medium text-gray-900 mb-2">{t('create_shipment.labels.total_cost')}</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span>Base Rate:</span>
-                    <span>${baseRate.toFixed(2)}</span>
+                    <span>{t('create_shipment.labels.base_rate')}:</span>
+                    <span>{formatCurrency(baseRate)}</span>
                   </div>
                   {formData.insurance && (
                     <div className="flex justify-between">
-                      <span>Insurance:</span>
-                      <span>${insuranceFee.toFixed(2)}</span>
+                      <span>{t('create_shipment.labels.insurance')}:</span>
+                      <span>{formatCurrency(insuranceFee)}</span>
                     </div>
                   )}
                   {formData.signature_required && (
                     <div className="flex justify-between">
-                      <span>Signature Required:</span>
-                      <span>${signatureFee.toFixed(2)}</span>
+                      <span>{t('create_shipment.labels.signature')}:</span>
+                      <span>{formatCurrency(signatureFee)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-medium text-gray-900 pt-2 border-t border-gray-200">
-                    <span>Total Cost:</span>
-                    <span>${totalCost.toFixed(2)}</span>
+                    <span>{t('create_shipment.labels.total_cost')}:</span>
+                    <span>{formatCurrency(totalCost)}</span>
                   </div>
                 </div>
               </div>
@@ -765,10 +773,10 @@ const CreateShipment: React.FC = () => {
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back to Shipments
+            {t('create_shipment.back')}
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">Create New Shipment</h1>
-          <p className="text-gray-600 mt-2">Follow the steps below to create your shipment</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('create_shipment.title')}</h1>
+          <p className="text-gray-600 mt-2">{t('create_shipment.subtitle')}</p>
         </div>
 
         {/* Progress Steps */}
@@ -818,7 +826,7 @@ const CreateShipment: React.FC = () => {
             disabled={currentStep === 1}
             className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            {t('create_shipment.buttons.previous')}
           </button>
           
           {currentStep < steps.length ? (
@@ -827,7 +835,7 @@ const CreateShipment: React.FC = () => {
               disabled={!isStepValid()}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {t('create_shipment.buttons.next')}
             </button>
           ) : (
             <button
@@ -835,7 +843,7 @@ const CreateShipment: React.FC = () => {
               disabled={loading}
               className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating...' : 'Create Shipment'}
+              {loading ? t('create_shipment.buttons.creating') : t('create_shipment.buttons.create')}
             </button>
           )}
         </div>

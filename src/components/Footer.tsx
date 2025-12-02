@@ -62,11 +62,7 @@ export default function Footer() {
                   {t('nav.contact')}
                 </Link>
               </li>
-              <li>
-                <Link to="/blog" className="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                  {t('nav.blog')}
-                </Link>
-              </li>
+              
             </ul>
           </div>
 

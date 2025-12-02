@@ -16,7 +16,6 @@ export default function Header() {
     { name: t('nav.services'), href: '/services' },
     { name: t('nav.clients'), href: '/clients' },
     { name: t('nav.contact'), href: '/contact' },
-    { name: t('nav.blog'), href: '/blog' },
   ];
 
   const [settings, setSettings] = useState<SiteSettings | null>(null);

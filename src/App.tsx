@@ -14,7 +14,7 @@ import About from '@/pages/About'
 import Services from '@/pages/Services'
 import Clients from '@/pages/Clients'
 import Contact from '@/pages/Contact'
-import Blog from '@/pages/Blog'
+// Blog removed per requirements
 import AdminContent from '@/pages/AdminContent'
 import Profile from '@/pages/Profile'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
@@ -35,7 +35,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/blog" element={<Blog />} />
+        
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
         {/* Registration removed: admin invites only */}
         
@@ -65,9 +65,8 @@ function PublicAnalytics() {
     '/services',
     '/clients',
     '/contact',
-    '/blog',
   ])
-  const isPublic = publicPaths.has(path) || path.startsWith('/blog/')
+  const isPublic = publicPaths.has(path)
   return isPublic ? <VercelAnalytics /> : null
 }
 

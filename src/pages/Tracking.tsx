@@ -89,6 +89,12 @@ const Tracking: React.FC = () => {
     });
   };
 
+  const formatCurrency = (amount: number) => {
+    const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
+    const currency = i18n.language.startsWith('ar') ? 'SAR' : 'USD';
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+  };
+
   const getProgressPercentage = () => {
     if (!shipment) return 0;
     switch (shipment.status) {
@@ -160,7 +166,7 @@ const Tracking: React.FC = () => {
                 </div>
                 <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(shipment.status)}`}>
                   {getStatusIcon(shipment.status)}
-                  {shipment.status.replace('_', ' ').toUpperCase()}
+                  {t(`shipments.${shipment.status}`)}
                 </span>
               </div>
 
@@ -248,7 +254,7 @@ const Tracking: React.FC = () => {
                         <div className="flex justify-between items-start">
                           <div>
                             <h4 className="font-medium text-gray-900 capitalize">
-                              {event.status.replace('_', ' ')}
+                              {t(`shipments.${event.status}`)}
                             </h4>
                             <p className="text-gray-600 mt-1">{event.description}</p>
                             {event.location && (
@@ -288,7 +294,7 @@ const Tracking: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t('tracking_page.value')}</p>
-                  <p className="font-medium rtl-ltr">${shipment.value}</p>
+                  <p className="font-medium rtl-ltr">{formatCurrency(shipment.value || 0)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">{t('tracking_page.service')}</p>

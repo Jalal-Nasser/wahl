@@ -83,10 +83,8 @@ const Analytics: React.FC = () => {
 
   const formatCurrency = (amount: number) => {
     const locale = i18n.language.startsWith('ar') ? 'ar-SA' : 'en-US';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
+    const currency = i18n.language.startsWith('ar') ? 'SAR' : 'USD';
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
   };
 
   // Calculate analytics data
@@ -117,7 +115,7 @@ const Analytics: React.FC = () => {
 
   // Prepare chart data
   const statusData = {
-    labels: ['Pending', 'In Transit', 'Delivered', 'Cancelled'],
+    labels: [t('shipments.pending'), t('shipments.in_transit'), t('shipments.delivered'), t('shipments.cancelled')],
     datasets: [{
       label: 'Shipments',
       data: [pendingShipments, inTransitShipments, deliveredShipments, cancelledShipments],
@@ -261,7 +259,7 @@ const Analytics: React.FC = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{t('nav.analytics')}</h1>
-              <p className="text-gray-600 mt-1">Comprehensive insights into your shipping operations</p>
+              <p className="text-gray-600 mt-1">{t('analytics.insights_sub')}</p>
             </div>
             <div className="flex items-center gap-4">
               <select
@@ -269,10 +267,10 @@ const Analytics: React.FC = () => {
                 onChange={(e) => setDateRange(e.target.value)}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="90">Last 90 days</option>
-                <option value="365">Last year</option>
+                <option value="7">{t('analytics.date_last_7')}</option>
+                <option value="30">{t('analytics.date_last_30')}</option>
+                <option value="90">{t('analytics.date_last_90')}</option>
+                <option value="365">{t('analytics.date_last_year')}</option>
               </select>
               <button
                 onClick={exportData}
@@ -318,7 +316,7 @@ const Analytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Revenue</p>
+                <p className="text-sm text-gray-600">{t('analytics.revenue')}</p>
                 <p className="text-3xl font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
                 <p className="text-sm text-green-600 mt-1">+{Math.round(Math.random() * 15)}% from last period</p>
               </div>
@@ -331,9 +329,9 @@ const Analytics: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm border p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg Delivery Time</p>
+                <p className="text-sm text-gray-600">{t('analytics.avg_delivery_time')}</p>
                 <p className="text-3xl font-bold text-gray-900">{avgDeliveryTime}</p>
-                <p className="text-sm text-gray-600 mt-1">days</p>
+                <p className="text-sm text-gray-600 mt-1">{t('analytics.days')}</p>
               </div>
               <div className="bg-purple-100 p-3 rounded-lg">
                 <Clock className="w-6 h-6 text-purple-600" />
@@ -353,13 +351,13 @@ const Analytics: React.FC = () => {
                   onClick={() => setChartType('bar')}
                   className={`px-3 py-1 text-sm rounded ${chartType === 'bar' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
-                  Bar
+                  {t('analytics.chart_bar')}
                 </button>
                 <button
                   onClick={() => setChartType('line')}
                   className={`px-3 py-1 text-sm rounded ${chartType === 'line' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
                 >
-                  Line
+                  {t('analytics.chart_line')}
                 </button>
               </div>
             </div>
@@ -372,7 +370,7 @@ const Analytics: React.FC = () => {
 
           {/* Status Distribution */}
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipment Status Distribution</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('analytics.status_distribution')}</h3>
             <Doughnut 
               data={statusData} 
               options={{
@@ -389,21 +387,21 @@ const Analytics: React.FC = () => {
 
         {/* Carrier Performance */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Carrier Performance</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('analytics.carrier_performance')}</h3>
           <Bar data={carrierPerformanceData} options={chartOptions} />
         </div>
 
         {/* Recent Shipments Table */}
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
           <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Shipments</h3>
-            <p className="text-sm text-gray-600 mt-1">Latest shipping activity</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t('analytics.recent_shipments')}</h3>
+            <p className="text-sm text-gray-600 mt-1">{t('analytics.latest_activity')}</p>
           </div>
           
           {shipments.length === 0 ? (
             <div className="p-8 text-center">
               <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No shipments found</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('analytics.no_shipments')}</h3>
               <p className="text-gray-600">No shipping data available for the selected time period.</p>
             </div>
           ) : (
@@ -412,19 +410,19 @@ const Analytics: React.FC = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tracking Number
+                      {t('shipments.tracking_number')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('shipments.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sender
+                      {t('shipments.sender')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipient
+                      {t('shipments.recipient')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Carrier
+                      {t('shipments.carrier')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {t('shipments.created')}
@@ -444,7 +442,7 @@ const Analytics: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(shipment.status)}`}>
-                          {shipment.status.replace('_', ' ').toUpperCase()}
+                          {t(`shipments.${shipment.status}`)}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

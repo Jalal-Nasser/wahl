@@ -13,7 +13,8 @@ export default function Login() {
   
   const { login, isLoading, error, errorCode } = useAuthStore()
   const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const rtl = i18n.language.startsWith('ar')
 
   useEffect(() => {
     const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
@@ -81,11 +82,11 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className={`block text-sm font-medium text-gray-700 mb-1 ${rtl ? 'text-right' : 'text-left'}`}>
                 {t('auth.email')}
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className={`absolute top-1/2 -translate-y-1/2 ${rtl ? 'right-3' : 'left-3'} pointer-events-none`}>
                   <Mail className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
@@ -94,7 +95,8 @@ export default function Login() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`block w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'ACCOUNT_NOT_FOUND' ? 'border-red-500' : 'border-gray-300'}`}
+                  dir="auto"
+                  className={`block w-full ${rtl ? 'pr-12 pl-10 text-right' : 'pl-12 pr-10'} py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'ACCOUNT_NOT_FOUND' ? 'border-red-500' : 'border-gray-300'}`}
                   aria-invalid={errorCode === 'ACCOUNT_NOT_FOUND' ? true : undefined}
                   placeholder={t('auth.email')}
                 />
@@ -102,11 +104,11 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className={`block text-sm font-medium text-gray-700 mb-1 ${rtl ? 'text-right' : 'text-left'}`}>
                 {t('auth.password')}
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className={`absolute top-1/2 -translate-y-1/2 ${rtl ? 'right-3' : 'left-3'} pointer-events-none`}>
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
@@ -115,13 +117,13 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'INCORRECT_PASSWORD' ? 'border-red-500' : 'border-gray-300'}`}
+                  className={`block w-full ${rtl ? 'pr-12 pl-12 text-right' : 'pl-12 pr-12'} py-2 border rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${errorCode === 'INCORRECT_PASSWORD' ? 'border-red-500' : 'border-gray-300'}`}
                   aria-invalid={errorCode === 'INCORRECT_PASSWORD' ? true : undefined}
                   placeholder={t('auth.password')}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  className={`absolute top-1/2 -translate-y-1/2 ${rtl ? 'left-3' : 'right-3'} flex items-center`}
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -133,19 +135,19 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div className={`flex items-center justify-between ${rtl ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center ${rtl ? 'flex-row-reverse gap-3' : 'gap-2'}`}>
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="remember-me" className="block text-sm text-gray-700">
                   {t('auth.remember')}
                 </label>
               </div>
-              <div className="text-sm">
+              <div className={`text-sm ${rtl ? 'text-right' : 'text-left'}`}>
                 <a href="#" className="font-medium text-blue-600 hover:text-blue-500 underline">
                   {t('auth.forgot_password')}
                 </a>
