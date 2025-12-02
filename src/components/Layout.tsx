@@ -12,6 +12,7 @@ export default function Layout() {
   const location = useLocation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { t } = useTranslation()
+  const rtl = document.documentElement.getAttribute('dir') === 'rtl'
 
   useEffect(() => {
     checkAuth()
@@ -42,8 +43,8 @@ export default function Layout() {
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
+          <div className={`flex justify-between h-16 ${rtl ? 'flex-row-reverse' : ''}`}>
+            <div className={`flex ${rtl ? 'flex-row-reverse' : ''}`}>
               {/* Logo */}
               <div className="flex-shrink-0 flex items-center">
                 <Link to="/dashboard" className="flex items-center gap-3">
@@ -55,7 +56,7 @@ export default function Layout() {
               </div>
 
               {/* Desktop Navigation */}
-              <div className="hidden sm:flex sm:gap-8 sm:mx-6">
+              <div className={`hidden sm:flex sm:gap-8 sm:mx-6 ${rtl ? 'flex-row-reverse' : ''}`}>
                 {navigation.map((item) => {
                   const Icon = item.icon
                   return (
@@ -63,7 +64,7 @@ export default function Layout() {
                       key={item.name}
                       to={item.href}
                       className={`
-                        inline-flex items-center gap-2 px-1 pt-1 border-b-2 text-sm font-medium
+                        inline-flex items-center gap-2 px-1 pt-1 border-b-2 text-sm font-medium ${rtl ? 'flex-row-reverse' : ''}
                         ${isActive(item.href)
                           ? 'border-blue-500 text-gray-900'
                           : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
@@ -79,7 +80,7 @@ export default function Layout() {
             </div>
 
             {/* Right side */}
-            <div className="hidden sm:flex sm:items-center sm:gap-4 sm:mx-6">
+            <div className={`hidden sm:flex sm:items-center sm:gap-4 sm:mx-6 ${rtl ? 'flex-row-reverse' : ''}`}>
               <Link
                 to="/shipments/create"
                 className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -134,9 +135,9 @@ export default function Layout() {
                     key={item.name}
                     to={item.href}
                     className={`
-                      flex items-center gap-3 px-4 py-2 text-base font-medium
+                      flex items-center gap-3 px-4 py-2 text-base font-medium ${rtl ? 'flex-row-reverse' : ''}
                       ${isActive(item.href)
-                        ? 'bg-blue-50 border-l-4 border-blue-500 text-blue-700'
+                        ? `${rtl ? 'bg-blue-50 border-r-4 border-blue-500 text-blue-700' : 'bg-blue-50 border-l-4 border-blue-500 text-blue-700'}`
                         : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }
                     `}

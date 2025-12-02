@@ -38,9 +38,9 @@ const Shipments: React.FC = () => {
   const filteredShipments = shipments.filter(shipment => {
     const matchesSearch = 
       shipment.tracking_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.sender_address?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.recipient_address?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.carrier?.name.toLowerCase().includes(searchTerm.toLowerCase());
+      (shipment.sender_address?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (shipment.recipient_address?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (shipment.carrier?.name || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' || shipment.status === statusFilter;
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Menu, X, Phone, Mail, MapPin } from 'lucide-react';
+import { Menu, X, Mail, MapPin, Facebook, Linkedin, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { SiteSettings } from '@/types/database';
 import { getSiteSettings } from '@/lib/contentProvider';
@@ -48,11 +48,30 @@ export default function Header() {
       {/* Top bar */}
       <div className="bg-blue-900 text-white py-2">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center text-xs sm:text-sm">
-            <div className="flex flex-wrap items-center gap-3 sm:gap-6">
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4" />
-                <span className="rtl-ltr whitespace-nowrap">{settings?.phone || '+966 12 345 6789'}</span>
+          <div className={`flex flex-col sm:flex-row ${document.documentElement.getAttribute('dir') === 'rtl' ? 'sm:flex-row-reverse' : ''} sm:justify-between sm:items-center text-xs sm:text-sm`}>
+            <div className={`flex flex-wrap items-center gap-3 sm:gap-6 ${document.documentElement.getAttribute('dir') === 'rtl' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center gap-3 ${document.documentElement.getAttribute('dir') === 'rtl' ? 'flex-row-reverse' : ''}`}>
+                {settings?.social_twitter ? (
+                  <a href={settings.social_twitter} target="_blank" rel="noreferrer" className="text-white hover:text-blue-300">
+                    <Twitter className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Twitter className="h-4 w-4" />
+                )}
+                {settings?.social_linkedin ? (
+                  <a href={settings.social_linkedin} target="_blank" rel="noreferrer" className="text-white hover:text-blue-300">
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Linkedin className="h-4 w-4" />
+                )}
+                {settings?.social_facebook ? (
+                  <a href={settings.social_facebook} target="_blank" rel="noreferrer" className="text-white hover:text-blue-300">
+                    <Facebook className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Facebook className="h-4 w-4" />
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
