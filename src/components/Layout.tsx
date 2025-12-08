@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { BarChart3, Truck, Search, LogOut, Menu, X, Home } from 'lucide-react'
+import { BarChart3, Truck, Search, LogOut, Menu, X, Home, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
@@ -57,7 +57,7 @@ export default function Layout() {
   }
 
   const isActive = (path: string) => {
-    return location.pathname === path
+    return location.pathname === path || location.pathname.startsWith(path + '/')
   }
 
   const navigation = [
@@ -65,6 +65,7 @@ export default function Layout() {
     { name: t('nav.shipments'), href: '/shipments', icon: Truck },
     { name: t('nav.tracking'), href: '/tracking', icon: Search },
     { name: t('nav.analytics'), href: '/analytics', icon: BarChart3 },
+    ...(user?.role === 'admin' ? [{ name: t('nav.admin'), href: '/admin/content', icon: Settings }] : []),
   ]
 
   return (
